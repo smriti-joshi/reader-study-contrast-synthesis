@@ -290,31 +290,20 @@
             {
               id: "q1",
               type: "radio",
-              label: "Overall image quality",
-              options: ["Excellent", "Good", "Fair", "Poor"]
+              label: "Lesion type",
+              options: ["Mass", "Non-mass enhancement (NME)", "Focus/foci", "Cannot determine"]
             },
             {
               id: "q2",
               type: "radio",
-              label: "Lesion visibility",
-              options: ["Clearly visible", "Moderately visible", "Poorly visible", "Not visible"]
+              label: "(If mass) Shape",
+              options: ["Round", "Oval", "Irregular"]
             },
             {
               id: "q3",
               type: "radio",
-              label: "Artifact level",
-              options: ["None", "Minimal", "Moderate", "Severe"]
-            },
-            {
-              id: "q4",
-              type: "radio",
-              label: "Diagnostic confidence",
-              options: ["High", "Moderate", "Low", "Non-diagnostic"]
-            },
-            {
-              id: "q5",
-              type: "text",
-              label: "Additional comments (optional)"
+              label: "Margins",
+              options: ["Circumscribed", "Irregular", "Spiculated", "Cannot determine"]
             }
           ]
         },
@@ -326,25 +315,31 @@
               id: "q1",
               type: "radio",
               label: "Enhancement pattern",
-              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "No enhancement"]
+              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "Dark internal septations", "Not assessable"]
             },
             {
               id: "q2",
               type: "radio",
-              label: "Margin definition",
-              options: ["Well-defined", "Irregular", "Spiculated", "Indistinct"]
+              label: "Kinetic plausibility",
+              options: [
+                "1 – Implausible (non-physiologic pattern)",
+                "2 – Poor (largely unnatural dynamics)",
+                "3 – Plausible (mostly physiologic, some inconsistencies)",
+                "4 – Good (minor deviations)",
+                "5 – Fully physiologic"
+              ]
             },
             {
               id: "q3",
               type: "radio",
-              label: "Internal characteristics",
-              options: ["Solid", "Cystic", "Mixed solid-cystic", "Necrotic"]
-            },
-            {
-              id: "q4",
-              type: "radio",
-              label: "Suspicion level",
-              options: ["Benign", "Probably benign", "Suspicious", "Highly suspicious"]
+              label: "Overall image quality",
+              options: [
+                "1 – Non-diagnostic (severe artifacts or unusable quality)",
+                "2 – Poor (significant artifacts/noise limiting interpretation)",
+                "3 – Acceptable (diagnostic, but with noticeable limitations)",
+                "4 – Good (minor artifacts/noise, no major impact on interpretation)",
+                "5 – Excellent (high-quality, minimal artifacts, fully diagnostic)"
+              ]
             }
           ]
         },
@@ -355,25 +350,24 @@
             {
               id: "q1",
               type: "radio",
-              label: "Kinetic curve assessment",
-              options: ["Type I (persistent)", "Type II (plateau)", "Type III (washout)"]
+              label: "Impact on clinical decision",
+              options: [
+                "1 – No change in assessment",
+                "2 – Minor change (no impact on clinical management)",
+                "3 – Major change (would affect clinical management or diagnosis)"
+              ]
             },
             {
               id: "q2",
               type: "radio",
-              label: "Bilateral symmetry",
-              options: ["Symmetric", "Asymmetric"]
-            },
-            {
-              id: "q3",
-              type: "text",
-              label: "Lesion size (mm)"
-            },
-            {
-              id: "q4",
-              type: "radio",
-              label: "Associated findings",
-              options: ["None", "Skin thickening", "Nipple retraction", "Lymphadenopathy"]
+              label: "Perceived synthetic appearance",
+              options: [
+                "1 – None (both appear fully natural)",
+                "2 – Minimal (subtle, non-specific differences)",
+                "3 – Mild (noticeable but not clearly synthetic)",
+                "4 – Strong (clear synthetic-like characteristics)",
+                "5 – Definite (obvious synthetic generation)"
+              ]
             }
           ]
         },
@@ -384,25 +378,13 @@
             {
               id: "q1",
               type: "radio",
-              label: "BI-RADS category",
-              options: ["BI-RADS 1", "BI-RADS 2", "BI-RADS 3", "BI-RADS 4", "BI-RADS 5"]
+              label: "Which method do you prefer? (First row = actual MRI acquisition)",
+              options: ["Method 1", "Method 2", "Method 3"]
             },
             {
               id: "q2",
-              type: "radio",
-              label: "Recommendation",
-              options: ["Routine screening", "Short-interval follow-up", "Biopsy", "Surgical consultation"]
-            },
-            {
-              id: "q3",
-              type: "radio",
-              label: "Final assessment",
-              options: ["Negative", "Benign", "Probably benign", "Suspicious", "Highly suggestive of malignancy"]
-            },
-            {
-              id: "q4",
               type: "text",
-              label: "Final comments"
+              label: "Additional comments (optional)"
             }
           ]
         }
@@ -419,31 +401,20 @@
             {
               id: "q1",
               type: "radio",
-              label: "Overall image quality",
-              options: ["Excellent", "Good", "Fair", "Poor"]
+              label: "Lesion type",
+              options: ["Mass", "Non-mass enhancement (NME)", "Focus/foci", "Cannot determine"]
             },
             {
               id: "q2",
               type: "radio",
-              label: "Lesion visibility",
-              options: ["Clearly visible", "Moderately visible", "Poorly visible", "Not visible"]
+              label: "(If mass) Shape",
+              options: ["Round", "Oval", "Irregular"]
             },
             {
               id: "q3",
               type: "radio",
-              label: "Artifact level",
-              options: ["None", "Minimal", "Moderate", "Severe"]
-            },
-            {
-              id: "q4",
-              type: "radio",
-              label: "Diagnostic confidence",
-              options: ["High", "Moderate", "Low", "Non-diagnostic"]
-            },
-            {
-              id: "q5",
-              type: "text",
-              label: "Additional comments (optional)"
+              label: "Margins",
+              options: ["Circumscribed", "Irregular", "Spiculated", "Cannot determine"]
             }
           ]
         },
@@ -455,25 +426,31 @@
               id: "q1",
               type: "radio",
               label: "Enhancement pattern",
-              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "No enhancement"]
+              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "Dark internal septations", "Not assessable"]
             },
             {
               id: "q2",
               type: "radio",
-              label: "Margin definition",
-              options: ["Well-defined", "Irregular", "Spiculated", "Indistinct"]
+              label: "Kinetic plausibility",
+              options: [
+                "1 – Implausible (non-physiologic pattern)",
+                "2 – Poor (largely unnatural dynamics)",
+                "3 – Plausible (mostly physiologic, some inconsistencies)",
+                "4 – Good (minor deviations)",
+                "5 – Fully physiologic"
+              ]
             },
             {
               id: "q3",
               type: "radio",
-              label: "Internal characteristics",
-              options: ["Solid", "Cystic", "Mixed solid-cystic", "Necrotic"]
-            },
-            {
-              id: "q4",
-              type: "radio",
-              label: "Suspicion level",
-              options: ["Benign", "Probably benign", "Suspicious", "Highly suspicious"]
+              label: "Overall image quality",
+              options: [
+                "1 – Non-diagnostic (severe artifacts or unusable quality)",
+                "2 – Poor (significant artifacts/noise limiting interpretation)",
+                "3 – Acceptable (diagnostic, but with noticeable limitations)",
+                "4 – Good (minor artifacts/noise, no major impact on interpretation)",
+                "5 – Excellent (high-quality, minimal artifacts, fully diagnostic)"
+              ]
             }
           ]
         },
@@ -484,25 +461,24 @@
             {
               id: "q1",
               type: "radio",
-              label: "Kinetic curve assessment",
-              options: ["Type I (persistent)", "Type II (plateau)", "Type III (washout)"]
+              label: "Impact on clinical decision",
+              options: [
+                "1 – No change in assessment",
+                "2 – Minor change (no impact on clinical management)",
+                "3 – Major change (would affect clinical management or diagnosis)"
+              ]
             },
             {
               id: "q2",
               type: "radio",
-              label: "Bilateral symmetry",
-              options: ["Symmetric", "Asymmetric"]
-            },
-            {
-              id: "q3",
-              type: "text",
-              label: "Lesion size (mm)"
-            },
-            {
-              id: "q4",
-              type: "radio",
-              label: "Associated findings",
-              options: ["None", "Skin thickening", "Nipple retraction", "Lymphadenopathy"]
+              label: "Perceived synthetic appearance",
+              options: [
+                "1 – None (both appear fully natural)",
+                "2 – Minimal (subtle, non-specific differences)",
+                "3 – Mild (noticeable but not clearly synthetic)",
+                "4 – Strong (clear synthetic-like characteristics)",
+                "5 – Definite (obvious synthetic generation)"
+              ]
             }
           ]
         },
@@ -513,25 +489,13 @@
             {
               id: "q1",
               type: "radio",
-              label: "BI-RADS category",
-              options: ["BI-RADS 1", "BI-RADS 2", "BI-RADS 3", "BI-RADS 4", "BI-RADS 5"]
+              label: "Which method do you prefer? (First row = actual MRI acquisition)",
+              options: ["Method 1", "Method 2", "Method 3"]
             },
             {
               id: "q2",
-              type: "radio",
-              label: "Recommendation",
-              options: ["Routine screening", "Short-interval follow-up", "Biopsy", "Surgical consultation"]
-            },
-            {
-              id: "q3",
-              type: "radio",
-              label: "Final assessment",
-              options: ["Negative", "Benign", "Probably benign", "Suspicious", "Highly suggestive of malignancy"]
-            },
-            {
-              id: "q4",
               type: "text",
-              label: "Final comments"
+              label: "Additional comments (optional)"
             }
           ]
         }
