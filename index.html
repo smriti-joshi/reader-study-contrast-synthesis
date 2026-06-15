@@ -106,6 +106,8 @@
     position: sticky;
     top: 80px;
     align-self: flex-start;
+    overflow: hidden;
+    cursor: zoom-in;
   }
   .section-image-panel img {
     width: 100%;
@@ -129,6 +131,54 @@
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 2px solid #eef1f5;
+  }
+
+  .section-description {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    padding: 12px 16px;
+    background: #f8f9fb;
+    border-radius: 8px;
+    border-left: 3px solid #0d47a1;
+  }
+
+  /* ── Zoom Controls ── */
+  .zoom-controls {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .section-image-panel:hover .zoom-controls {
+    opacity: 1;
+  }
+  .zoom-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    line-height: 1;
+  }
+  .zoom-btn:hover {
+    background: rgba(0,0,0,0.8);
+  }
+  .zoom-btn:active {
+    transform: scale(0.92);
   }
 
   /* ── Questions ── */
@@ -591,6 +641,7 @@
   var SECTION_TEMPLATES = [
     {
       // Sections 1 & 2 — lesion characterization + image quality
+      description: "Please assess the features of the tumor in the image. Evaluate lesion type, morphology, enhancement pattern, kinetic plausibility, and overall image quality.",
       questions: [
         {
           id: "q1",
@@ -644,6 +695,7 @@
     },
     {
       // Section 3 — clinical decision
+      description: "Please compare the synthetic and real image and assess their diagnostic equivalence. Evaluate the impact on clinical decision-making and perceived synthetic appearance.",
       questions: [
         {
           id: "q1",
@@ -688,6 +740,7 @@
     },
     {
       // Section 4 — method preference
+      description: "Please compare contrast synthesis methods present in the literature and choose the synthetic image generation you prefer based on image quality and diagnostic utility.",
       questions: [
         {
           id: "q1",
@@ -807,6 +860,7 @@
       return {
         image_url: IMAGE_SOURCES[c][s],
         section_id: "case" + (c + 1) + "_sec" + (s + 1),
+        description: tpl.description,
         questions: tpl.questions
       };
     });
@@ -854,6 +908,7 @@
       img.alt = "Case " + (caseIdx + 1) + " Section " + (secIdx + 1);
       img.loading = "lazy";
       imgPanel.appendChild(img);
+      makeZoomable(imgPanel);
       secDiv.appendChild(imgPanel);
 
       // ── Right Panel: Title + Questions + Nav (scrollable) ──
@@ -864,6 +919,14 @@
       title.className = "section-title";
       title.textContent = "Case " + (caseIdx + 1) + " \u2014 Section " + (secIdx + 1);
       questionsPanel.appendChild(title);
+
+      // ── Section Description ──
+      if (sec.description) {
+        var desc = document.createElement("p");
+        desc.className = "section-description";
+        desc.textContent = sec.description;
+        questionsPanel.appendChild(desc);
+      }
 
       // ── Questions ──
       sec.questions.forEach(function (q, qIdx) {
@@ -995,6 +1058,104 @@
       next.scrollIntoView({ behavior: "smooth", block: "start" });
       updateProgress();
     }
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  ZOOM FUNCTIONALITY
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  function makeZoomable(panel) {
+    var img = panel.querySelector('img');
+    if (!img) return;
+
+    var scale = 1;
+    var panX = 0;
+    var panY = 0;
+    var isDragging = false;
+    var startX, startY;
+    var MIN_SCALE = 1;
+    var MAX_SCALE = 5;
+
+    function update() {
+      img.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
+      panel.style.cursor = scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in';
+    }
+
+    // Mouse wheel zoom (towards cursor)
+    panel.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var rect = panel.getBoundingClientRect();
+      var mouseX = e.clientX - rect.left;
+      var mouseY = e.clientY - rect.top;
+      var delta = e.deltaY > 0 ? -0.1 : 0.1;
+      var newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale + delta));
+
+      if (newScale !== scale) {
+        var ratio = 1 - newScale / scale;
+        panX += (mouseX - panel.offsetWidth / 2 - panX) * ratio;
+        panY += (mouseY - panel.offsetHeight / 2 - panY) * ratio;
+        scale = newScale;
+        update();
+      }
+    }, { passive: false });
+
+    // Double-click to reset
+    img.addEventListener('dblclick', function (e) {
+      e.preventDefault();
+      scale = 1;
+      panX = 0;
+      panY = 0;
+      update();
+    });
+
+    // Drag to pan (when zoomed in)
+    img.addEventListener('mousedown', function (e) {
+      if (scale > 1) {
+        isDragging = true;
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('mousemove', function (e) {
+      if (isDragging) {
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        update();
+      }
+    });
+
+    document.addEventListener('mouseup', function () {
+      isDragging = false;
+      update();
+    });
+
+    // Zoom control buttons
+    var controls = document.createElement('div');
+    controls.className = 'zoom-controls';
+    controls.innerHTML = ''
+      + '<button type="button" class="zoom-btn" data-action="zoom-in" title="Zoom in">+</button>'
+      + '<button type="button" class="zoom-btn" data-action="zoom-out" title="Zoom out">\u2212</button>'
+      + '<button type="button" class="zoom-btn" data-action="zoom-reset" title="Reset zoom">\u21BA</button>';
+
+    controls.addEventListener('click', function (e) {
+      var btn = e.target.closest('.zoom-btn');
+      if (!btn) return;
+      var action = btn.getAttribute('data-action');
+      if (action === 'zoom-in') {
+        scale = Math.min(MAX_SCALE, scale + 0.25);
+      } else if (action === 'zoom-out') {
+        scale = Math.max(MIN_SCALE, scale - 0.25);
+      } else if (action === 'zoom-reset') {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+      }
+      update();
+    });
+
+    panel.appendChild(controls);
   }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
