@@ -291,6 +291,79 @@
     color: #555;
     margin-bottom: 20px;
   }
+
+  /* ── Resume Banner ── */
+  .resume-banner {
+    display: none;
+    background: #e3f2fd;
+    border: 1.5px solid #90caf9;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+  }
+  .resume-banner.visible {
+    display: block;
+  }
+  .resume-banner p {
+    font-size: 0.95rem;
+    color: #0d47a1;
+    margin-bottom: 12px;
+  }
+  .resume-banner .btn-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .resume-banner .btn-resume {
+    padding: 10px 28px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #0d47a1;
+    color: #fff;
+    transition: background 0.2s;
+  }
+  .resume-banner .btn-resume:hover {
+    background: #1565c0;
+  }
+  .resume-banner .btn-restart {
+    padding: 10px 28px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: 1.5px solid #b0bec5;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+    color: #555;
+    transition: background 0.2s;
+  }
+  .resume-banner .btn-restart:hover {
+    background: #f5f5f5;
+  }
+
+  /* ── Save Indicator ── */
+  .save-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 200;
+    background: rgba(13,71,161,0.9);
+    color: #fff;
+    font-size: 0.78rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .save-indicator.visible {
+    opacity: 1;
+  }
 </style>
 </head>
 <body>
@@ -320,6 +393,17 @@
   novalidate
 >
   <div class="study-container" id="studyContainer">
+    <!-- ════════════════════════════════════════════════ -->
+    <!--  RESUME BANNER (shown when saved progress found) -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div class="resume-banner" id="resumeBanner">
+      <p>&#x1F4C2; You have saved progress from a previous session.</p>
+      <div class="btn-group">
+        <button type="button" class="btn-resume" id="btnResume">Resume where I left off</button>
+        <button type="button" class="btn-restart" id="btnRestart">Start fresh</button>
+      </div>
+    </div>
+
     <!-- ════════════════════════════════════════════════ -->
     <!--  PAGE 1: WELCOME                                -->
     <!-- ════════════════════════════════════════════════ -->
@@ -422,6 +506,8 @@
     <!-- Sections injected by JavaScript -->
   </div>
 </form>
+
+<div class="save-indicator" id="saveIndicator">&#x2705; Saved</div>
 
 <footer class="study-footer">
   &copy; 2026 &middot; Clinical Reader Study &middot; All data are confidential.
@@ -537,7 +623,7 @@
     }
   ];
 
-  var NUM_CASES = 30;
+  var NUM_CASES = 2;
   var CASE_DATA = [];
 
   for (var c = 1; c <= NUM_CASES; c++) {
@@ -767,6 +853,123 @@
   updateProgress();
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  SAVE / RESTORE PROGRESS (localStorage)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  var STORAGE_KEY = "readerStudyProgress";
+
+  function collectFormData() {
+    var data = {};
+    var fields = document.querySelectorAll("#studyForm input, #studyForm textarea, #studyForm select");
+    fields.forEach(function (f) {
+      if (f.type === "radio") {
+        if (f.checked) data[f.name] = f.value;
+      } else if (f.type === "text" || f.type === "textarea" || f.type === "email") {
+        data[f.name] = f.value;
+      }
+    });
+    return data;
+  }
+
+  function restoreFormData(data) {
+    var fields = document.querySelectorAll("#studyForm input, #studyForm textarea, #studyForm select");
+    fields.forEach(function (f) {
+      if (f.type === "radio") {
+        if (data[f.name] && f.value === data[f.name]) {
+          f.checked = true;
+        }
+      } else if (f.type === "text" || f.type === "textarea" || f.type === "email") {
+        if (data[f.name] !== undefined) {
+          f.value = data[f.name];
+        }
+      }
+    });
+  }
+
+  function getActiveIndex() {
+    var all = document.querySelectorAll(".section");
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].classList.contains("active")) return i;
+    }
+    return 0;
+  }
+
+  function goToSection(index) {
+    var all = document.querySelectorAll(".section");
+    if (index < 0 || index >= all.length) return;
+    all.forEach(function (s) { s.classList.remove("active"); });
+    all[index].classList.add("active");
+    all[index].scrollIntoView({ behavior: "smooth", block: "start" });
+    updateProgress();
+  }
+
+  function saveProgress() {
+    var data = collectFormData();
+    data._activeIndex = getActiveIndex();
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      showSaveIndicator();
+    } catch (e) {
+      // localStorage full or unavailable — silently ignore
+    }
+  }
+
+  function loadProgress() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearProgress() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) { /* ignore */ }
+  }
+
+  function hasSavedProgress() {
+    return loadProgress() !== null;
+  }
+
+  var saveTimeout = null;
+  function autoSave() {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(saveProgress, 500);
+  }
+
+  var indicatorTimer = null;
+  function showSaveIndicator() {
+    var el = document.getElementById("saveIndicator");
+    if (!el) return;
+    el.classList.add("visible");
+    if (indicatorTimer) clearTimeout(indicatorTimer);
+    indicatorTimer = setTimeout(function () {
+      el.classList.remove("visible");
+    }, 1500);
+  }
+
+  // Auto-save on any input change
+  document.addEventListener("input", function (e) {
+    if (e.target.closest("#studyForm")) autoSave();
+  });
+
+  // Also save after navigating to next section
+  function saveAfterNavigation() {
+    setTimeout(saveProgress, 100);
+  }
+
+  // Check for saved progress on startup
+  function checkSavedProgress() {
+    var saved = loadProgress();
+    if (saved && saved._activeIndex !== undefined && saved._activeIndex > 0) {
+      document.getElementById("resumeBanner").classList.add("visible");
+    }
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   //  HANDLE STATIC PAGES (welcome & registration)
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -790,8 +993,64 @@
       next.classList.add("active");
       next.scrollIntoView({ behavior: "smooth", block: "start" });
       updateProgress();
+      saveAfterNavigation();
     }
   });
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  RESUME / RESTART BUTTONS
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  document.getElementById("btnResume").addEventListener("click", function () {
+    var saved = loadProgress();
+    if (!saved) return;
+
+    // Restore all form values
+    restoreFormData(saved);
+
+    // Navigate to saved section
+    var targetIdx = saved._activeIndex || 0;
+    goToSection(targetIdx);
+
+    // Hide banner
+    document.getElementById("resumeBanner").classList.remove("visible");
+  });
+
+  document.getElementById("btnRestart").addEventListener("click", function () {
+    if (confirm("Are you sure? All your saved progress will be lost.")) {
+      clearProgress();
+      document.getElementById("resumeBanner").classList.remove("visible");
+      goToSection(0);
+    }
+  });
+
+  // Save progress when navigating between case sections
+  goNext = function (currentEl) {
+    if (!validateSection(currentEl)) return;
+
+    var next = currentEl.nextElementSibling;
+    while (next && !next.classList.contains("section")) {
+      next = next.nextElementSibling;
+    }
+    if (next && next.classList.contains("section")) {
+      currentEl.classList.remove("active");
+      next.classList.add("active");
+      next.scrollIntoView({ behavior: "smooth", block: "start" });
+      updateProgress();
+      saveAfterNavigation();
+    }
+  };
+
+  // Clear saved progress on successful form submission
+  document.getElementById("studyForm").addEventListener("submit", function () {
+    // Clear progress (will persist even if page navigates)
+    clearProgress();
+    // Allow form to submit normally
+    return true;
+  });
+
+  // Check for saved progress after everything is built
+  setTimeout(checkSavedProgress, 300);
 
 })();
 </script>
