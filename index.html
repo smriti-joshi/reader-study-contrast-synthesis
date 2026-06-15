@@ -62,12 +62,12 @@
 
   /* ── Main Content ── */
   .study-container {
-    max-width: 720px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 90px 20px 100px;
   }
 
-  /* ── Section Card ── */
+  /* ── Section Card (default for static pages) ── */
   .section {
     display: none;
     background: #ffffff;
@@ -85,14 +85,41 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .section-image {
+  /* ── Case Section — side-by-side layout ── */
+  .section.case-section {
+    padding: 0 !important;
+    overflow: hidden;
+    min-height: calc(100vh - 160px);
+  }
+  .section.case-section.active {
+    display: flex;
+    flex-direction: row;
+  }
+  .section-image-panel {
+    flex: 0 0 55%;
+    max-width: 55%;
+    background: #1a1a2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: inherit;
+    position: sticky;
+    top: 80px;
+    align-self: flex-start;
+  }
+  .section-image-panel img {
     width: 100%;
-    max-height: 400px;
+    height: auto;
+    max-height: calc(100vh - 180px);
     object-fit: contain;
-    border-radius: 8px;
-    background: #f0f2f5;
-    margin-bottom: 20px;
     display: block;
+    border-radius: 0;
+  }
+  .section-questions-panel {
+    flex: 1;
+    padding: 28px 28px 24px;
+    overflow-y: auto;
+    max-height: calc(100vh - 160px);
   }
 
   .section-title {
@@ -225,12 +252,39 @@
       width: 100%;
       text-align: center;
     }
+    /* Stack case sections vertically on mobile */
+    .section.case-section {
+      flex-direction: column !important;
+      min-height: auto;
+    }
+    .section.case-section.active {
+      flex-direction: column !important;
+    }
+    .section-image-panel {
+      flex: none !important;
+      max-width: 100% !important;
+      position: static !important;
+      min-height: auto;
+      padding: 12px;
+    }
+    .section-image-panel img {
+      max-height: 50vh;
+    }
+    .section-questions-panel {
+      overflow: visible;
+      max-height: none;
+      padding: 16px;
+    }
   }
 
   /* ── Welcome Page ── */
   .welcome-section {
     text-align: center;
     padding: 48px 28px 36px !important;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
   }
   .welcome-inner {
     display: flex;
@@ -286,6 +340,12 @@
   }
 
   /* ── Registration Page ── */
+  .registration-section {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
   .registration-intro {
     font-size: 0.95rem;
     color: #555;
@@ -302,6 +362,9 @@
     margin-bottom: 24px;
     text-align: center;
     animation: fadeIn 0.3s ease;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .resume-banner.visible {
     display: block;
@@ -774,24 +837,30 @@
   CASE_DATA.forEach(function (c, caseIdx) {
     c.sections.forEach(function (sec, secIdx) {
       var secDiv = document.createElement("div");
-      secDiv.className = "section";
+      secDiv.className = "section case-section";
       secDiv.dataset.caseIndex = caseIdx + 1;
       secDiv.dataset.sectionIndex = secIdx + 1;
       secDiv.dataset.sectionId = sec.section_id;
 
-      // ── Image ──
+      // ── Left Panel: Image (sticky) ──
+      var imgPanel = document.createElement("div");
+      imgPanel.className = "section-image-panel";
+
       var img = document.createElement("img");
-      img.className = "section-image";
       img.src = sec.image_url;
       img.alt = "Case " + (caseIdx + 1) + " Section " + (secIdx + 1);
       img.loading = "lazy";
-      secDiv.appendChild(img);
+      imgPanel.appendChild(img);
+      secDiv.appendChild(imgPanel);
 
-      // ── Title ──
+      // ── Right Panel: Title + Questions + Nav (scrollable) ──
+      var questionsPanel = document.createElement("div");
+      questionsPanel.className = "section-questions-panel";
+
       var title = document.createElement("div");
       title.className = "section-title";
       title.textContent = "Case " + (caseIdx + 1) + " \u2014 Section " + (secIdx + 1);
-      secDiv.appendChild(title);
+      questionsPanel.appendChild(title);
 
       // ── Questions ──
       sec.questions.forEach(function (q, qIdx) {
@@ -833,7 +902,7 @@
           grp.appendChild(inp);
         }
 
-        secDiv.appendChild(grp);
+        questionsPanel.appendChild(grp);
       });
 
       // ── Navigation Button ──
@@ -861,7 +930,9 @@
       }
 
       navDiv.appendChild(btn);
-      secDiv.appendChild(navDiv);
+      questionsPanel.appendChild(navDiv);
+
+      secDiv.appendChild(questionsPanel);
 
       container.appendChild(secDiv);
       sectionIndex++;
