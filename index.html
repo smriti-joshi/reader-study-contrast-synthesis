@@ -302,6 +302,8 @@
     /* Stack case sections vertically on mobile */
     .section.case-section {
       flex-direction: column !important;
+      height: auto !important;
+      overflow: visible !important;
       min-height: auto;
     }
     .section.case-section.active {
@@ -312,15 +314,30 @@
       max-width: 100% !important;
       position: static !important;
       min-height: auto;
-      padding: 4px;
+      padding: 0;
     }
     .section-image-panel img {
-      max-height: 68vh;
+      max-height: 45vh;
+      width: 100%;
+      object-fit: contain;
     }
     .section-questions-panel {
       overflow: visible;
       max-height: none;
       padding: 16px;
+    }
+    .zoom-controls {
+      opacity: 1;
+    }
+    .section-title {
+      font-size: 0.95rem;
+    }
+    .question-label {
+      font-size: 0.88rem;
+    }
+    .section-description {
+      font-size: 0.85rem;
+      padding: 10px 12px;
     }
   }
 
