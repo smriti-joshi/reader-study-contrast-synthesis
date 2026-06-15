@@ -557,11 +557,11 @@
           type: "radio",
           label: "Kinetic plausibility",
           options: [
-            "1 – Implausible (non-physiologic pattern)",
-            "2 – Poor (largely unnatural dynamics)",
-            "3 – Plausible (mostly physiologic, some inconsistencies)",
-            "4 – Good (minor deviations)",
-            "5 – Fully physiologic"
+            "Implausible (non-physiologic pattern)",
+            "Poor (largely unnatural dynamics)",
+            "Plausible (mostly physiologic, some inconsistencies)",
+            "Good (minor deviations)",
+            "Fully physiologic"
           ]
         },
         {
@@ -569,11 +569,11 @@
           type: "radio",
           label: "Overall image quality",
           options: [
-            "1 – Non-diagnostic (severe artifacts or unusable quality)",
-            "2 – Poor (significant artifacts/noise limiting interpretation)",
-            "3 – Acceptable (diagnostic, but with noticeable limitations)",
-            "4 – Good (minor artifacts/noise, no major impact on interpretation)",
-            "5 – Excellent (high-quality, minimal artifacts, fully diagnostic)"
+            "Non-diagnostic (severe artifacts or unusable quality)",
+            "Poor (significant artifacts/noise limiting interpretation)",
+            "Acceptable (diagnostic, but with noticeable limitations)",
+            "Good (minor artifacts/noise, no major impact on interpretation)",
+            "Excellent (high-quality, minimal artifacts, fully diagnostic)"
           ]
         }
       ]
@@ -586,9 +586,9 @@
           type: "radio",
           label: "Impact on clinical decision",
           options: [
-            "1 – No change in assessment",
-            "2 – Minor change (no impact on clinical management)",
-            "3 – Major change (would affect clinical management or diagnosis)"
+            "No change in assessment",
+            "Minor change (no impact on clinical management)",
+            "Major change (would affect clinical management or diagnosis)"
           ]
         },
         {
@@ -596,13 +596,29 @@
           type: "radio",
           label: "Perceived synthetic appearance",
           options: [
-            "1 – None (both appear fully natural)",
-            "2 – Minimal (subtle, non-specific differences)",
-            "3 – Mild (noticeable but not clearly synthetic)",
-            "4 – Strong (clear synthetic-like characteristics)",
-            "5 – Definite (obvious synthetic generation)"
+            "None (both appear fully natural)",
+            "Minimal (subtle, non-specific differences)",
+            "Mild (noticeable but not clearly synthetic)",
+            "Strong (clearly synthetic-like characteristics)"
           ]
-        }
+        },
+        {
+          id: "q3",
+          type: "radio",
+          label: "If the impact is major, what is the main reason?",
+          options: [
+            "Incorrect tumor localization",
+            "Incorrect tumor extent/size estimation",
+            "Implausible enhacement kinetics",
+            "Image quality issues (artifacts, noise, etc.)",
+            "Missed lesion or false detection"
+          ], 
+        },
+        {
+          id: "q4",
+          type: "text",
+          label: "If it is none of the above, please indicate the discrepancy reason here"
+          }
       ]
     },
     {
@@ -626,19 +642,113 @@
   var NUM_CASES = 2;
   var CASE_DATA = [];
 
-  for (var c = 1; c <= NUM_CASES; c++) {
-    // Sections 1 & 2 use template 0, section 3 = template 1, section 4 = template 2
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  IMAGE SOURCES — Fill in the actual image paths/URLs below.
+  //
+  //  Structure: IMAGE_SOURCES[caseIndex][sectionIndex] = "path/or/url"
+  //  - caseIndex: 0-based (0 = Case 1, 1 = Case 2, ... 29 = Case 30)
+  //  - sectionIndex: 0-based (0 = Section 1, 1 = Section 2, 2 = Section 3, 3 = Section 4)
+  //
+  //  You can use:
+  //    • Local paths: "images/case1_sec1.png"  (store files in an images/ folder in the repo)
+  //    • External URLs: "https://your-server.com/case1_sec1.png"
+  //
+  //  To add your images, just replace the placeholder strings below.
+  //  To add more cases, extend the array — each entry must have exactly 4 URLs.
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  var IMAGE_SOURCES = [
+    // ── Case 1 ──
+    [
+      "images/case1_sec1.png",   // Section 1 — Lesion characterization
+      "images/case1_sec2.png",   // Section 2 — Image quality
+      "images/case1_sec3.png",   // Section 3 — Clinical decision
+      "images/case1_sec4.png"    // Section 4 — Method preference
+    ],
+    // // ── Case 2 ──
+    // [
+    //   "images/case2_sec1.png",
+    //   "images/case2_sec2.png",
+    //   "images/case2_sec3.png",
+    //   "images/case2_sec4.png"
+    // ]
+    /* ── Add cases 3–30 below, following the same pattern ──
+    ,
+    // ── Case 3 ──
+    [ "images/case3_sec1.png", "images/case3_sec2.png", "images/case3_sec3.png", "images/case3_sec4.png" ],
+    // ── Case 4 ──
+    [ "images/case4_sec1.png", "images/case4_sec2.png", "images/case4_sec3.png", "images/case4_sec4.png" ],
+    // ── Case 5 ──
+    [ "images/case5_sec1.png", "images/case5_sec2.png", "images/case5_sec3.png", "images/case5_sec4.png" ],
+    // ── Case 6 ──
+    [ "images/case6_sec1.png", "images/case6_sec2.png", "images/case6_sec3.png", "images/case6_sec4.png" ],
+    // ── Case 7 ──
+    [ "images/case7_sec1.png", "images/case7_sec2.png", "images/case7_sec3.png", "images/case7_sec4.png" ],
+    // ── Case 8 ──
+    [ "images/case8_sec1.png", "images/case8_sec2.png", "images/case8_sec3.png", "images/case8_sec4.png" ],
+    // ── Case 9 ──
+    [ "images/case9_sec1.png", "images/case9_sec2.png", "images/case9_sec3.png", "images/case9_sec4.png" ],
+    // ── Case 10 ──
+    [ "images/case10_sec1.png", "images/case10_sec2.png", "images/case10_sec3.png", "images/case10_sec4.png" ],
+    // ── Case 11 ──
+    [ "images/case11_sec1.png", "images/case11_sec2.png", "images/case11_sec3.png", "images/case11_sec4.png" ],
+    // ── Case 12 ──
+    [ "images/case12_sec1.png", "images/case12_sec2.png", "images/case12_sec3.png", "images/case12_sec4.png" ],
+    // ── Case 13 ──
+    [ "images/case13_sec1.png", "images/case13_sec2.png", "images/case13_sec3.png", "images/case13_sec4.png" ],
+    // ── Case 14 ──
+    [ "images/case14_sec1.png", "images/case14_sec2.png", "images/case14_sec3.png", "images/case14_sec4.png" ],
+    // ── Case 15 ──
+    [ "images/case15_sec1.png", "images/case15_sec2.png", "images/case15_sec3.png", "images/case15_sec4.png" ],
+    // ── Case 16 ──
+    [ "images/case16_sec1.png", "images/case16_sec2.png", "images/case16_sec3.png", "images/case16_sec4.png" ],
+    // ── Case 17 ──
+    [ "images/case17_sec1.png", "images/case17_sec2.png", "images/case17_sec3.png", "images/case17_sec4.png" ],
+    // ── Case 18 ──
+    [ "images/case18_sec1.png", "images/case18_sec2.png", "images/case18_sec3.png", "images/case18_sec4.png" ],
+    // ── Case 19 ──
+    [ "images/case19_sec1.png", "images/case19_sec2.png", "images/case19_sec3.png", "images/case19_sec4.png" ],
+    // ── Case 20 ──
+    [ "images/case20_sec1.png", "images/case20_sec2.png", "images/case20_sec3.png", "images/case20_sec4.png" ],
+    // ── Case 21 ──
+    [ "images/case21_sec1.png", "images/case21_sec2.png", "images/case21_sec3.png", "images/case21_sec4.png" ],
+    // ── Case 22 ──
+    [ "images/case22_sec1.png", "images/case22_sec2.png", "images/case22_sec3.png", "images/case22_sec4.png" ],
+    // ── Case 23 ──
+    [ "images/case23_sec1.png", "images/case23_sec2.png", "images/case23_sec3.png", "images/case23_sec4.png" ],
+    // ── Case 24 ──
+    [ "images/case24_sec1.png", "images/case24_sec2.png", "images/case24_sec3.png", "images/case24_sec4.png" ],
+    // ── Case 25 ──
+    [ "images/case25_sec1.png", "images/case25_sec2.png", "images/case25_sec3.png", "images/case25_sec4.png" ],
+    // ── Case 26 ──
+    [ "images/case26_sec1.png", "images/case26_sec2.png", "images/case26_sec3.png", "images/case26_sec4.png" ],
+    // ── Case 27 ──
+    [ "images/case27_sec1.png", "images/case27_sec2.png", "images/case27_sec3.png", "images/case27_sec4.png" ],
+    // ── Case 28 ──
+    [ "images/case28_sec1.png", "images/case28_sec2.png", "images/case28_sec3.png", "images/case28_sec4.png" ],
+    // ── Case 29 ──
+    [ "images/case29_sec1.png", "images/case29_sec2.png", "images/case29_sec3.png", "images/case29_sec4.png" ],
+    // ── Case 30 ──
+    [ "images/case30_sec1.png", "images/case30_sec2.png", "images/case30_sec3.png", "images/case30_sec4.png" ]
+    */
+  ];
+
+  // Build CASE_DATA from IMAGE_SOURCES
+  for (var c = 0; c < IMAGE_SOURCES.length; c++) {
     var secTemplates = [0, 0, 1, 2];
     var sections = secTemplates.map(function (tplIdx, s) {
       var tpl = SECTION_TEMPLATES[tplIdx];
       return {
-        image_url: "https://picsum.photos/seed/case" + c + "_sec" + (s + 1) + "/700/400",
-        section_id: "case" + c + "_sec" + (s + 1),
+        image_url: IMAGE_SOURCES[c][s],
+        section_id: "case" + (c + 1) + "_sec" + (s + 1),
         questions: tpl.questions
       };
     });
     CASE_DATA.push({ sections: sections });
   }
+
+  // Also set NUM_CASES from the array length so you only edit one place
+  NUM_CASES = IMAGE_SOURCES.length;
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   //  BUILD THE DOM
