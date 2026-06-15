@@ -680,7 +680,8 @@
         {
           id: "q4",
           type: "text",
-          label: "If it is none of the above, please indicate the discrepancy reason here"
+          label: "If it is none of the above, please indicate the discrepancy reason here",
+          required: false
           }
       ]
     },
@@ -696,7 +697,8 @@
         {
           id: "q2",
           type: "text",
-          label: "Additional comments (optional)"
+          label: "Additional comments (optional)",
+          required: false
         }
       ]
     }
@@ -871,7 +873,7 @@
 
         var label = document.createElement("div");
         label.className = "question-label";
-        var isRequired = q.type !== "text" || (q.label && !/optional/i.test(q.label));
+        var isRequired = q.required !== undefined ? q.required : (q.type !== "text" || (q.label && !/optional/i.test(q.label)));
         label.innerHTML = q.label + (isRequired ? '<span class="required"> *</span>' : "");
         grp.appendChild(label);
 
