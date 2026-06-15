@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Reader Study</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+    background: #f4f6f8;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+
+  /* ── Fixed Header ── */
+  .study-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #ffffff;
+    border-bottom: 1px solid #dde1e6;
+    padding: 14px 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+  .study-header .title {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #0d47a1;
+  }
+  .study-header .progress {
+    font-size: 0.9rem;
+    color: #444;
+  }
+  .study-header .progress span {
+    font-weight: 600;
+    color: #0d47a1;
+  }
+  .progress-bar-track {
+    width: 100%;
+    height: 4px;
+    background: #e0e4e8;
+    border-radius: 4px;
+    margin-top: 6px;
+    flex: 1 1 100%;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #0d47a1, #1976d2);
+    border-radius: 4px;
+    transition: width 0.35s ease;
+  }
+
+  /* ── Main Content ── */
+  .study-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 90px 20px 100px;
+  }
+
+  /* ── Section Card ── */
+  .section {
+    display: none;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 28px 28px 24px;
+    margin-bottom: 24px;
+  }
+  .section.active {
+    display: block;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #f0f2f5;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .section-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0d47a1;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eef1f5;
+  }
+
+  /* ── Questions ── */
+  .question-group {
+    margin-bottom: 18px;
+  }
+  .question-group:last-of-type {
+    margin-bottom: 0;
+  }
+  .question-label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    color: #2c3e50;
+  }
+  .question-label .required {
+    color: #d32f2f;
+    margin-left: 2px;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    border: 1.5px solid #ccd2d9;
+    border-radius: 6px;
+    background: #fafbfc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  select:focus, input[type="text"]:focus, textarea:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 3px rgba(25,118,210,0.12);
+    background: #fff;
+  }
+
+  .radio-group, .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    padding: 6px 0;
+  }
+  .radio-group label,
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    color: #2c3e50;
+  }
+  .radio-group input[type="radio"],
+  .checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #0d47a1;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ── Navigation ── */
+  .nav-buttons {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .btn-next, .btn-submit {
+    padding: 12px 36px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    background: #0d47a1;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+  .btn-next:hover, .btn-submit:hover {
+    background: #1565c0;
+  }
+  .btn-next:active, .btn-submit:active {
+    transform: scale(0.97);
+  }
+  .btn-submit {
+    background: #2e7d32;
+  }
+  .btn-submit:hover {
+    background: #388e3c;
+  }
+
+  /* ── Footer ── */
+  .study-footer {
+    text-align: center;
+    padding: 16px 20px;
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .study-header {
+      padding: 10px 14px;
+    }
+    .study-header .title {
+      font-size: 0.9rem;
+    }
+    .study-container {
+      padding: 80px 12px 80px;
+    }
+    .section {
+      padding: 20px 16px;
+    }
+    .radio-group, .checkbox-group {
+      gap: 8px 16px;
+    }
+    .btn-next, .btn-submit {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!--  FIXED HEADER                                                  -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<header class="study-header" id="studyHeader">
+  <div class="title">&#x1F4CB;&#x2002;Clinical Reader Study</div>
+  <div class="progress" id="progressText">
+    Case <span id="currentCase">1</span> of 30 &mdash;
+    Step <span id="currentStep">1</span> of 4 &nbsp;|&nbsp;
+    Total Progress: <span id="totalProgress">0</span> / 120
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!--  MAIN FORM                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<form
+  id="studyForm"
+  action="https://formspree.io/f/xjgdlbrn"
+  method="POST"
+  novalidate
+>
+  <div class="study-container" id="studyContainer">
+    <!-- Sections injected by JavaScript -->
+  </div>
+</form>
+
+<footer class="study-footer">
+  &copy; 2026 &middot; Clinical Reader Study &middot; All data are confidential.
+</footer>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!--  JAVASCRIPT                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  "use strict";
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  DATA — 30 cases × 4 sections = 120 sections
+  //  Each section has an image_url, section_id, and questions[].
+  //
+  //  MOCK:  2 full cases are provided below (cases 1–2, 8 sections).
+  //  REAL:  Paste the remaining 28 cases (cases 3–30) into the array
+  //         starting at the marker labelled "INSERT REMAINING 28 CASES".
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  var CASE_DATA = [
+    // ──────────────────────────── Case 1 ────────────────────────────
+    {
+      sections: [
+        {
+          image_url: "https://picsum.photos/seed/case1_sec1/700/400",
+          section_id: "case1_sec1",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "Overall image quality",
+              options: ["Excellent", "Good", "Fair", "Poor"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Lesion visibility",
+              options: ["Clearly visible", "Moderately visible", "Poorly visible", "Not visible"]
+            },
+            {
+              id: "q3",
+              type: "radio",
+              label: "Artifact level",
+              options: ["None", "Minimal", "Moderate", "Severe"]
+            },
+            {
+              id: "q4",
+              type: "radio",
+              label: "Diagnostic confidence",
+              options: ["High", "Moderate", "Low", "Non-diagnostic"]
+            },
+            {
+              id: "q5",
+              type: "text",
+              label: "Additional comments (optional)"
+            }
+          ]
+        },
+        {
+          image_url: "https://picsum.photos/seed/case1_sec2/700/400",
+          section_id: "case1_sec2",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "Enhancement pattern",
+              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "No enhancement"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Margin definition",
+              options: ["Well-defined", "Irregular", "Spiculated", "Indistinct"]
+            },
+            {
+              id: "q3",
+              type: "radio",
+              label: "Internal characteristics",
+              options: ["Solid", "Cystic", "Mixed solid-cystic", "Necrotic"]
+            },
+            {
+              id: "q4",
+              type: "radio",
+              label: "Suspicion level",
+              options: ["Benign", "Probably benign", "Suspicious", "Highly suspicious"]
+            }
+          ]
+        },
+        {
+          image_url: "https://picsum.photos/seed/case1_sec3/700/400",
+          section_id: "case1_sec3",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "Kinetic curve assessment",
+              options: ["Type I (persistent)", "Type II (plateau)", "Type III (washout)"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Bilateral symmetry",
+              options: ["Symmetric", "Asymmetric"]
+            },
+            {
+              id: "q3",
+              type: "text",
+              label: "Lesion size (mm)"
+            },
+            {
+              id: "q4",
+              type: "radio",
+              label: "Associated findings",
+              options: ["None", "Skin thickening", "Nipple retraction", "Lymphadenopathy"]
+            }
+          ]
+        },
+        {
+          image_url: "https://picsum.photos/seed/case1_sec4/700/400",
+          section_id: "case1_sec4",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "BI-RADS category",
+              options: ["BI-RADS 1", "BI-RADS 2", "BI-RADS 3", "BI-RADS 4", "BI-RADS 5"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Recommendation",
+              options: ["Routine screening", "Short-interval follow-up", "Biopsy", "Surgical consultation"]
+            },
+            {
+              id: "q3",
+              type: "radio",
+              label: "Final assessment",
+              options: ["Negative", "Benign", "Probably benign", "Suspicious", "Highly suggestive of malignancy"]
+            },
+            {
+              id: "q4",
+              type: "text",
+              label: "Final comments"
+            }
+          ]
+        }
+      ]
+    },
+
+    // ──────────────────────────── Case 2 ────────────────────────────
+    {
+      sections: [
+        {
+          image_url: "https://picsum.photos/seed/case2_sec1/700/400",
+          section_id: "case2_sec1",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "Overall image quality",
+              options: ["Excellent", "Good", "Fair", "Poor"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Lesion visibility",
+              options: ["Clearly visible", "Moderately visible", "Poorly visible", "Not visible"]
+            },
+            {
+              id: "q3",
+              type: "radio",
+              label: "Artifact level",
+              options: ["None", "Minimal", "Moderate", "Severe"]
+            },
+            {
+              id: "q4",
+              type: "radio",
+              label: "Diagnostic confidence",
+              options: ["High", "Moderate", "Low", "Non-diagnostic"]
+            },
+            {
+              id: "q5",
+              type: "text",
+              label: "Additional comments (optional)"
+            }
+          ]
+        },
+        {
+          image_url: "https://picsum.photos/seed/case2_sec2/700/400",
+          section_id: "case2_sec2",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "Enhancement pattern",
+              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "No enhancement"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Margin definition",
+              options: ["Well-defined", "Irregular", "Spiculated", "Indistinct"]
+            },
+            {
+              id: "q3",
+              type: "radio",
+              label: "Internal characteristics",
+              options: ["Solid", "Cystic", "Mixed solid-cystic", "Necrotic"]
+            },
+            {
+              id: "q4",
+              type: "radio",
+              label: "Suspicion level",
+              options: ["Benign", "Probably benign", "Suspicious", "Highly suspicious"]
+            }
+          ]
+        },
+        {
+          image_url: "https://picsum.photos/seed/case2_sec3/700/400",
+          section_id: "case2_sec3",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "Kinetic curve assessment",
+              options: ["Type I (persistent)", "Type II (plateau)", "Type III (washout)"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Bilateral symmetry",
+              options: ["Symmetric", "Asymmetric"]
+            },
+            {
+              id: "q3",
+              type: "text",
+              label: "Lesion size (mm)"
+            },
+            {
+              id: "q4",
+              type: "radio",
+              label: "Associated findings",
+              options: ["None", "Skin thickening", "Nipple retraction", "Lymphadenopathy"]
+            }
+          ]
+        },
+        {
+          image_url: "https://picsum.photos/seed/case2_sec4/700/400",
+          section_id: "case2_sec4",
+          questions: [
+            {
+              id: "q1",
+              type: "radio",
+              label: "BI-RADS category",
+              options: ["BI-RADS 1", "BI-RADS 2", "BI-RADS 3", "BI-RADS 4", "BI-RADS 5"]
+            },
+            {
+              id: "q2",
+              type: "radio",
+              label: "Recommendation",
+              options: ["Routine screening", "Short-interval follow-up", "Biopsy", "Surgical consultation"]
+            },
+            {
+              id: "q3",
+              type: "radio",
+              label: "Final assessment",
+              options: ["Negative", "Benign", "Probably benign", "Suspicious", "Highly suggestive of malignancy"]
+            },
+            {
+              id: "q4",
+              type: "text",
+              label: "Final comments"
+            }
+          ]
+        }
+      ]
+    }
+
+    /* ================================================================
+       INSERT REMAINING 28 CASES HERE (cases 3 through 30)
+       Follow the same structure:
+       {
+         sections: [
+           { image_url: "…", section_id: "caseN_sec1", questions: […] },
+           { image_url: "…", section_id: "caseN_sec2", questions: […] },
+           { image_url: "…", section_id: "caseN_sec3", questions: […] },
+           { image_url: "…", section_id: "caseN_sec4", questions: […] }
+         ]
+       }
+       ================================================================ */
+  ];
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  BUILD THE DOM
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  var container = document.getElementById("studyContainer");
+  var totalSections = 0;
+
+  // Count total sections across all cases for progress tracking
+  CASE_DATA.forEach(function (c) { totalSections += c.sections.length; });
+
+  var sectionIndex = 0; // global flat index across all cases
+
+  CASE_DATA.forEach(function (c, caseIdx) {
+    c.sections.forEach(function (sec, secIdx) {
+      var secDiv = document.createElement("div");
+      secDiv.className = "section" + (sectionIndex === 0 ? " active" : "");
+      secDiv.dataset.caseIndex = caseIdx + 1;
+      secDiv.dataset.sectionIndex = secIdx + 1;
+      secDiv.dataset.sectionId = sec.section_id;
+
+      // ── Image ──
+      var img = document.createElement("img");
+      img.className = "section-image";
+      img.src = sec.image_url;
+      img.alt = "Case " + (caseIdx + 1) + " Section " + (secIdx + 1);
+      img.loading = "lazy";
+      secDiv.appendChild(img);
+
+      // ── Title ──
+      var title = document.createElement("div");
+      title.className = "section-title";
+      title.textContent = "Case " + (caseIdx + 1) + " \u2014 Section " + (secIdx + 1);
+      secDiv.appendChild(title);
+
+      // ── Questions ──
+      sec.questions.forEach(function (q, qIdx) {
+        var nameAttr = sec.section_id + "_" + q.id;
+
+        var grp = document.createElement("div");
+        grp.className = "question-group";
+
+        var label = document.createElement("div");
+        label.className = "question-label";
+        var isRequired = q.type !== "text" || (q.label && !/optional/i.test(q.label));
+        label.innerHTML = q.label + (isRequired ? '<span class="required"> *</span>' : "");
+        grp.appendChild(label);
+
+        if (q.type === "radio") {
+          var radioGroup = document.createElement("div");
+          radioGroup.className = "radio-group";
+
+          q.options.forEach(function (opt) {
+            var wrap = document.createElement("label");
+            var inp = document.createElement("input");
+            inp.type = "radio";
+            inp.name = nameAttr;
+            inp.value = opt;
+            inp.required = isRequired;
+            wrap.appendChild(inp);
+            wrap.appendChild(document.createTextNode(" " + opt));
+            radioGroup.appendChild(wrap);
+          });
+
+          grp.appendChild(radioGroup);
+
+        } else if (q.type === "text") {
+          var inp = document.createElement("input");
+          inp.type = "text";
+          inp.name = nameAttr;
+          inp.placeholder = q.label;
+          if (isRequired) inp.required = true;
+          grp.appendChild(inp);
+        }
+
+        secDiv.appendChild(grp);
+      });
+
+      // ── Navigation Button ──
+      var navDiv = document.createElement("div");
+      navDiv.className = "nav-buttons";
+
+      var isLast = (sectionIndex === totalSections - 1);
+      var btn = document.createElement("button");
+      btn.type = isLast ? "submit" : "button";
+      btn.className = isLast ? "btn-submit" : "btn-next";
+      btn.textContent = isLast ? "Submit Study" : "Next";
+      if (!isLast) {
+        btn.addEventListener("click", function (e) {
+          goNext(secDiv);
+        });
+      }
+      // For the submit button, let the form's native validation handle required fields.
+      // But we ALSO need to run our own validation first for consistency.
+      if (isLast) {
+        btn.addEventListener("click", function (e) {
+          if (!validateSection(secDiv)) {
+            e.preventDefault();
+          }
+        });
+      }
+
+      navDiv.appendChild(btn);
+      secDiv.appendChild(navDiv);
+
+      container.appendChild(secDiv);
+      sectionIndex++;
+    });
+  });
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  NAVIGATION LOGIC
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  var allSections = document.querySelectorAll(".section");
+
+  function validateSection(el) {
+    var requiredFields = el.querySelectorAll("[required]");
+    for (var i = 0; i < requiredFields.length; i++) {
+      var field = requiredFields[i];
+
+      // Radio button group — check if any radio in the group is checked
+      if (field.type === "radio") {
+        var radios = el.querySelectorAll("input[type='radio'][name='" + field.name + "']");
+        var checked = false;
+        for (var r = 0; r < radios.length; r++) {
+          if (radios[r].checked) { checked = true; break; }
+        }
+        if (!checked) {
+          alert("Please answer all questions before proceeding.\n\nMissing: \"" +
+                getLabelForField(field) + "\"");
+          return false;
+        }
+      } else if (field.type === "text" && field.required) {
+        if (!field.value.trim()) {
+          alert("Please answer all questions before proceeding.\n\nMissing: \"" +
+                getLabelForField(field) + "\"");
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function getLabelForField(field) {
+    var grp = field.closest(".question-group");
+    if (grp) {
+      var lbl = grp.querySelector(".question-label");
+      if (lbl) return lbl.textContent.replace(/ \*$/, "").trim();
+    }
+    return "a question";
+  }
+
+  function goNext(currentEl) {
+    if (!validateSection(currentEl)) return;
+
+    var next = currentEl.nextElementSibling;
+    if (next && next.classList.contains("section")) {
+      currentEl.classList.remove("active");
+      next.classList.add("active");
+      next.scrollIntoView({ behavior: "smooth", block: "start" });
+      updateProgress();
+    }
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  PROGRESS INDICATOR
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  function updateProgress() {
+    var active = document.querySelector(".section.active");
+    if (!active) return;
+
+    var caseNum   = active.dataset.caseIndex;
+    var stepNum   = active.dataset.sectionIndex;
+    var secId     = active.dataset.sectionId;
+
+    // Find the 1-based position of the active section
+    var all = document.querySelectorAll(".section");
+    var currentPos = 0;
+    for (var i = 0; i < all.length; i++) {
+      if (all[i] === active) {
+        currentPos = i + 1; // 1-based
+        break;
+      }
+    }
+    document.getElementById("currentCase").textContent   = caseNum;
+    document.getElementById("currentStep").textContent   = stepNum;
+    document.getElementById("totalProgress").textContent  = currentPos;
+    document.getElementById("progressFill").style.width   = (currentPos / totalSections * 100) + "%";
+  }
+
+  // Initialise progress on page load
+  updateProgress();
+
+})();
+</script>
+
+</body>
+</html>
