@@ -615,23 +615,23 @@
 
       <div class="question-group">
         <div class="question-label">First name <span class="required">*</span></div>
-        <input type="text" name="reader_firstname" placeholder="First name" required>
+        <input type="text" name="reader_firstname" placeholder="First name">
       </div>
       <div class="question-group">
         <div class="question-label">Surname <span class="required">*</span></div>
-        <input type="text" name="reader_surname" placeholder="Surname" required>
+        <input type="text" name="reader_surname" placeholder="Surname">
       </div>
       <div class="question-group">
         <div class="question-label">Email <span class="required">*</span></div>
-        <input type="text" name="reader_email" placeholder="email@institution.org" required>
+        <input type="text" name="reader_email" placeholder="email@institution.org">
       </div>
       <div class="question-group">
         <div class="question-label">Institution <span class="required">*</span></div>
-        <input type="text" name="reader_institution" placeholder="Institution name" required>
+        <input type="text" name="reader_institution" placeholder="Institution name">
       </div>
       <div class="question-group">
         <div class="question-label">Years of experience as a breast radiologist <span class="required">*</span></div>
-        <input type="text" name="reader_experience" placeholder="e.g. 5" required>
+        <input type="text" name="reader_experience" placeholder="e.g. 5">
       </div>
 
       <div class="nav-buttons">
@@ -972,7 +972,7 @@
             inp.type = "radio";
             inp.name = nameAttr;
             inp.value = opt;
-            inp.required = isRequired;
+            inp.required = false;
             wrap.appendChild(inp);
             wrap.appendChild(document.createTextNode(" " + opt));
             radioGroup.appendChild(wrap);
@@ -985,7 +985,7 @@
           inp.type = "text";
           inp.name = nameAttr;
           inp.placeholder = q.label;
-          if (isRequired) inp.required = true;
+          inp.required = false;
           grp.appendChild(inp);
         }
 
@@ -1059,7 +1059,7 @@
           inp.type = "radio";
           inp.name = "opinion_" + (labelText.toLowerCase().replace(/[^a-z0-9]+/g, "_"));
           inp.value = opt;
-          if (isRequired) inp.required = true;
+          inp.required = false;
           wrap.appendChild(inp);
           wrap.appendChild(document.createTextNode(" " + opt));
           radioGroup.appendChild(wrap);
@@ -1070,7 +1070,7 @@
         ta.name = "opinion_" + (labelText.toLowerCase().replace(/[^a-z0-9]+/g, "_"));
         ta.placeholder = "Share your thoughts…";
         ta.style.cssText = "width:100%;padding:10px 12px;font-size:0.95rem;font-family:inherit;border:1.5px solid #ccd2d9;border-radius:6px;background:#fafbfc;outline:none;min-height:100px;resize:vertical;";
-        if (isRequired) ta.required = true;
+        ta.required = false;
         grp.appendChild(ta);
       }
 
