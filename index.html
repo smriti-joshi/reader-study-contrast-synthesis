@@ -1067,12 +1067,63 @@
     var scale = 1;
     var panX = 0;
     var panY = 0;
+    var isDragging = false;
+    var startX, startY;
     var MIN_SCALE = 1;
     var MAX_SCALE = 5;
 
     function update() {
       img.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
     }
+
+    function resetIfAtMin() {
+      if (scale <= MIN_SCALE) {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        update();
+      }
+    }
+
+    // Mouse wheel zoom
+    img.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? -0.15 : 0.15;
+      scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale + delta));
+      resetIfAtMin();
+      update();
+    }, { passive: false });
+
+    // Double-click to reset
+    img.addEventListener('dblclick', function (e) {
+      e.preventDefault();
+      scale = 1;
+      panX = 0;
+      panY = 0;
+      update();
+    });
+
+    // Drag to pan (only when zoomed in)
+    img.addEventListener('mousedown', function (e) {
+      if (scale > 1) {
+        isDragging = true;
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('mousemove', function (e) {
+      if (isDragging) {
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        update();
+      }
+    });
+
+    document.addEventListener('mouseup', function () {
+      isDragging = false;
+    });
 
     // Zoom control buttons
     var controls = document.createElement('div');
@@ -1095,6 +1146,7 @@
         panX = 0;
         panY = 0;
       }
+      resetIfAtMin();
       update();
     });
 
