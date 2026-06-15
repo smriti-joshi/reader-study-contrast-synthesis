@@ -226,6 +226,71 @@
       text-align: center;
     }
   }
+
+  /* ── Welcome Page ── */
+  .welcome-section {
+    text-align: center;
+    padding: 48px 28px 36px !important;
+  }
+  .welcome-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .welcome-icon {
+    margin-bottom: 4px;
+  }
+  .welcome-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0d47a1;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+  }
+  .welcome-subtitle {
+    font-size: 1.05rem;
+    color: #555;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+  .welcome-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 8px 0;
+    text-align: left;
+  }
+  .welcome-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: #333;
+  }
+  .detail-icon {
+    font-size: 1.3rem;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .welcome-disclaimer {
+    font-size: 0.82rem;
+    color: #888;
+    max-width: 480px;
+    line-height: 1.5;
+    margin-top: 4px;
+    padding: 12px 16px;
+    background: #f8f9fb;
+    border-radius: 8px;
+  }
+
+  /* ── Registration Page ── */
+  .registration-intro {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 20px;
+  }
 </style>
 </head>
 <body>
@@ -238,7 +303,7 @@
   <div class="progress" id="progressText">
     Case <span id="currentCase">1</span> of 30 &mdash;
     Step <span id="currentStep">1</span> of 4 &nbsp;|&nbsp;
-    Total Progress: <span id="totalProgress">0</span> / 120
+    Total Progress: <span id="totalProgress">0</span> / 122
   </div>
   <div class="progress-bar-track">
     <div class="progress-bar-fill" id="progressFill"></div>
@@ -255,6 +320,105 @@
   novalidate
 >
   <div class="study-container" id="studyContainer">
+    <!-- ════════════════════════════════════════════════ -->
+    <!--  PAGE 1: WELCOME                                -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div class="section welcome-section active" data-section-type="welcome">
+      <div class="welcome-inner">
+        <div class="welcome-icon">
+          <svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="wg1" x1="0" y1="0" x2="200" y2="200">
+                <stop offset="0%" stop-color="#0d47a1"/>
+                <stop offset="100%" stop-color="#42a5f5"/>
+              </linearGradient>
+              <linearGradient id="wg2" x1="0" y1="200" x2="200" y2="0">
+                <stop offset="0%" stop-color="#1565c0" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#bbdefb" stop-opacity="0.1"/>
+              </linearGradient>
+            </defs>
+            <!-- Background circle -->
+            <circle cx="100" cy="100" r="96" fill="url(#wg2)" stroke="url(#wg1)" stroke-width="3"/>
+            <!-- MRI brain/slice icon -->
+            <ellipse cx="100" cy="85" rx="50" ry="40" fill="none" stroke="url(#wg1)" stroke-width="2.5"/>
+            <ellipse cx="100" cy="85" rx="30" ry="24" fill="none" stroke="url(#wg1)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <!-- Internal structure lines -->
+            <line x1="65" y1="80" x2="135" y2="80" stroke="url(#wg1)" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <line x1="70" y1="90" x2="130" y2="90" stroke="url(#wg1)" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <line x1="75" y1="70" x2="125" y2="70" stroke="url(#wg1)" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <!-- Contrast curve -->
+            <path d="M40 140 Q60 110 80 120 Q100 130 120 105 Q140 80 160 90" stroke="#ef5350" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="120" cy="105" r="4" fill="#ef5350"/>
+            <circle cx="160" cy="90" r="4" fill="#ef5350"/>
+            <!-- Enhancement dots -->
+            <circle cx="80" cy="120" r="3" fill="#66bb6a"/>
+            <circle cx="100" cy="130" r="3" fill="#66bb6a"/>
+            <!-- Scan lines -->
+            <line x1="50" y1="60" x2="150" y2="60" stroke="#1976d2" stroke-width="0.8" opacity="0.3"/>
+            <line x1="50" y1="110" x2="150" y2="110" stroke="#1976d2" stroke-width="0.8" opacity="0.3"/>
+            <!-- Label -->
+            <text x="100" y="175" text-anchor="middle" font-family="inherit" font-size="11" fill="#0d47a1" font-weight="500">breast MRI</text>
+          </svg>
+        </div>
+        <h1 class="welcome-title">Assessing Temporal Contrast Synthesis<br>in Breast MRI</h1>
+        <p class="welcome-subtitle">A clinical reader study on AI-based contrast enhancement synthesis</p>
+        <div class="welcome-details">
+          <div class="welcome-detail-item">
+            <span class="detail-icon">&#x1F504;</span>
+            <span>Evaluate synthetic contrast-enhanced images</span>
+          </div>
+          <div class="welcome-detail-item">
+            <span class="detail-icon">&#x1F50D;</span>
+            <span>Assess lesion characterization and image quality</span>
+          </div>
+          <div class="welcome-detail-item">
+            <span class="detail-icon">&#x23F1;&#xFE0F;</span>
+            <span>30 cases &middot; ~45 minutes</span>
+          </div>
+        </div>
+        <p class="welcome-disclaimer">
+          This study is part of a research project on temporal contrast synthesis in breast MRI.
+          Your responses are confidential and will be anonymized for analysis.
+        </p>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn-next welcome-next">Begin Study</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!--  PAGE 2: REGISTRATION                           -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div class="section registration-section" data-section-type="registration">
+      <div class="section-title">Reader Information</div>
+      <p class="registration-intro">Please provide your details before starting the study.</p>
+
+      <div class="question-group">
+        <div class="question-label">First name <span class="required">*</span></div>
+        <input type="text" name="reader_firstname" placeholder="First name" required>
+      </div>
+      <div class="question-group">
+        <div class="question-label">Surname <span class="required">*</span></div>
+        <input type="text" name="reader_surname" placeholder="Surname" required>
+      </div>
+      <div class="question-group">
+        <div class="question-label">Email <span class="required">*</span></div>
+        <input type="text" name="reader_email" placeholder="email@institution.org" required>
+      </div>
+      <div class="question-group">
+        <div class="question-label">Institution <span class="required">*</span></div>
+        <input type="text" name="reader_institution" placeholder="Institution name" required>
+      </div>
+      <div class="question-group">
+        <div class="question-label">Years of experience as a breast radiologist <span class="required">*</span></div>
+        <input type="text" name="reader_experience" placeholder="e.g. 5" required>
+      </div>
+
+      <div class="nav-buttons">
+        <button type="button" class="btn-next">Next</button>
+      </div>
+    </div>
+
     <!-- Sections injected by JavaScript -->
   </div>
 </form>
@@ -271,267 +435,143 @@
   "use strict";
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  //  DATA — 30 cases × 4 sections = 120 sections
-  //  Each section has an image_url, section_id, and questions[].
-  //
-  //  MOCK:  2 full cases are provided below (cases 1–2, 8 sections).
-  //  REAL:  Paste the remaining 28 cases (cases 3–30) into the array
-  //         starting at the marker labelled "INSERT REMAINING 28 CASES".
+  //  DATA — Generate 30 cases × 4 sections via a loop
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  var CASE_DATA = [
-    // ──────────────────────────── Case 1 ────────────────────────────
+  var SECTION_TEMPLATES = [
     {
-      sections: [
+      // Sections 1 & 2 — lesion characterization + image quality
+      questions: [
         {
-          image_url: "https://picsum.photos/seed/case1_sec1/700/400",
-          section_id: "case1_sec1",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Lesion type",
-              options: ["Mass", "Non-mass enhancement (NME)", "Focus/foci", "Cannot determine"]
-            },
-            {
-              id: "q2",
-              type: "radio",
-              label: "(If mass) Shape",
-              options: ["Round", "Oval", "Irregular"]
-            },
-            {
-              id: "q3",
-              type: "radio",
-              label: "Margins",
-              options: ["Circumscribed", "Irregular", "Spiculated", "Cannot determine"]
-            }
+          id: "q1",
+          type: "radio",
+          label: "Lesion type",
+          options: ["Mass", "Non-mass enhancement (NME)", "Focus/foci", "Cannot determine"]
+        },
+        {
+          id: "q2",
+          type: "radio",
+          label: "(If mass) Shape",
+          options: ["Round", "Oval", "Irregular"]
+        },
+        {
+          id: "q3",
+          type: "radio",
+          label: "Margins",
+          options: ["Circumscribed", "Irregular", "Spiculated", "Cannot determine"]
+        },
+        {
+          id: "q4",
+          type: "radio",
+          label: "Enhancement pattern",
+          options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "Dark internal septations", "Not assessable"]
+        },
+        {
+          id: "q5",
+          type: "radio",
+          label: "Kinetic plausibility",
+          options: [
+            "1 – Implausible (non-physiologic pattern)",
+            "2 – Poor (largely unnatural dynamics)",
+            "3 – Plausible (mostly physiologic, some inconsistencies)",
+            "4 – Good (minor deviations)",
+            "5 – Fully physiologic"
           ]
         },
         {
-          image_url: "https://picsum.photos/seed/case1_sec2/700/400",
-          section_id: "case1_sec2",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Enhancement pattern",
-              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "Dark internal septations", "Not assessable"]
-            },
-            {
-              id: "q2",
-              type: "radio",
-              label: "Kinetic plausibility",
-              options: [
-                "1 – Implausible (non-physiologic pattern)",
-                "2 – Poor (largely unnatural dynamics)",
-                "3 – Plausible (mostly physiologic, some inconsistencies)",
-                "4 – Good (minor deviations)",
-                "5 – Fully physiologic"
-              ]
-            },
-            {
-              id: "q3",
-              type: "radio",
-              label: "Overall image quality",
-              options: [
-                "1 – Non-diagnostic (severe artifacts or unusable quality)",
-                "2 – Poor (significant artifacts/noise limiting interpretation)",
-                "3 – Acceptable (diagnostic, but with noticeable limitations)",
-                "4 – Good (minor artifacts/noise, no major impact on interpretation)",
-                "5 – Excellent (high-quality, minimal artifacts, fully diagnostic)"
-              ]
-            }
-          ]
-        },
-        {
-          image_url: "https://picsum.photos/seed/case1_sec3/700/400",
-          section_id: "case1_sec3",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Impact on clinical decision",
-              options: [
-                "1 – No change in assessment",
-                "2 – Minor change (no impact on clinical management)",
-                "3 – Major change (would affect clinical management or diagnosis)"
-              ]
-            },
-            {
-              id: "q2",
-              type: "radio",
-              label: "Perceived synthetic appearance",
-              options: [
-                "1 – None (both appear fully natural)",
-                "2 – Minimal (subtle, non-specific differences)",
-                "3 – Mild (noticeable but not clearly synthetic)",
-                "4 – Strong (clear synthetic-like characteristics)",
-                "5 – Definite (obvious synthetic generation)"
-              ]
-            }
-          ]
-        },
-        {
-          image_url: "https://picsum.photos/seed/case1_sec4/700/400",
-          section_id: "case1_sec4",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Which method do you prefer? (First row = actual MRI acquisition)",
-              options: ["Method 1", "Method 2", "Method 3"]
-            },
-            {
-              id: "q2",
-              type: "text",
-              label: "Additional comments (optional)"
-            }
+          id: "q6",
+          type: "radio",
+          label: "Overall image quality",
+          options: [
+            "1 – Non-diagnostic (severe artifacts or unusable quality)",
+            "2 – Poor (significant artifacts/noise limiting interpretation)",
+            "3 – Acceptable (diagnostic, but with noticeable limitations)",
+            "4 – Good (minor artifacts/noise, no major impact on interpretation)",
+            "5 – Excellent (high-quality, minimal artifacts, fully diagnostic)"
           ]
         }
       ]
     },
-
-    // ──────────────────────────── Case 2 ────────────────────────────
     {
-      sections: [
+      // Section 3 — clinical decision
+      questions: [
         {
-          image_url: "https://picsum.photos/seed/case2_sec1/700/400",
-          section_id: "case2_sec1",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Lesion type",
-              options: ["Mass", "Non-mass enhancement (NME)", "Focus/foci", "Cannot determine"]
-            },
-            {
-              id: "q2",
-              type: "radio",
-              label: "(If mass) Shape",
-              options: ["Round", "Oval", "Irregular"]
-            },
-            {
-              id: "q3",
-              type: "radio",
-              label: "Margins",
-              options: ["Circumscribed", "Irregular", "Spiculated", "Cannot determine"]
-            }
+          id: "q1",
+          type: "radio",
+          label: "Impact on clinical decision",
+          options: [
+            "1 – No change in assessment",
+            "2 – Minor change (no impact on clinical management)",
+            "3 – Major change (would affect clinical management or diagnosis)"
           ]
         },
         {
-          image_url: "https://picsum.photos/seed/case2_sec2/700/400",
-          section_id: "case2_sec2",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Enhancement pattern",
-              options: ["Homogeneous", "Heterogeneous", "Rim enhancement", "Dark internal septations", "Not assessable"]
-            },
-            {
-              id: "q2",
-              type: "radio",
-              label: "Kinetic plausibility",
-              options: [
-                "1 – Implausible (non-physiologic pattern)",
-                "2 – Poor (largely unnatural dynamics)",
-                "3 – Plausible (mostly physiologic, some inconsistencies)",
-                "4 – Good (minor deviations)",
-                "5 – Fully physiologic"
-              ]
-            },
-            {
-              id: "q3",
-              type: "radio",
-              label: "Overall image quality",
-              options: [
-                "1 – Non-diagnostic (severe artifacts or unusable quality)",
-                "2 – Poor (significant artifacts/noise limiting interpretation)",
-                "3 – Acceptable (diagnostic, but with noticeable limitations)",
-                "4 – Good (minor artifacts/noise, no major impact on interpretation)",
-                "5 – Excellent (high-quality, minimal artifacts, fully diagnostic)"
-              ]
-            }
-          ]
-        },
-        {
-          image_url: "https://picsum.photos/seed/case2_sec3/700/400",
-          section_id: "case2_sec3",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Impact on clinical decision",
-              options: [
-                "1 – No change in assessment",
-                "2 – Minor change (no impact on clinical management)",
-                "3 – Major change (would affect clinical management or diagnosis)"
-              ]
-            },
-            {
-              id: "q2",
-              type: "radio",
-              label: "Perceived synthetic appearance",
-              options: [
-                "1 – None (both appear fully natural)",
-                "2 – Minimal (subtle, non-specific differences)",
-                "3 – Mild (noticeable but not clearly synthetic)",
-                "4 – Strong (clear synthetic-like characteristics)",
-                "5 – Definite (obvious synthetic generation)"
-              ]
-            }
-          ]
-        },
-        {
-          image_url: "https://picsum.photos/seed/case2_sec4/700/400",
-          section_id: "case2_sec4",
-          questions: [
-            {
-              id: "q1",
-              type: "radio",
-              label: "Which method do you prefer? (First row = actual MRI acquisition)",
-              options: ["Method 1", "Method 2", "Method 3"]
-            },
-            {
-              id: "q2",
-              type: "text",
-              label: "Additional comments (optional)"
-            }
+          id: "q2",
+          type: "radio",
+          label: "Perceived synthetic appearance",
+          options: [
+            "1 – None (both appear fully natural)",
+            "2 – Minimal (subtle, non-specific differences)",
+            "3 – Mild (noticeable but not clearly synthetic)",
+            "4 – Strong (clear synthetic-like characteristics)",
+            "5 – Definite (obvious synthetic generation)"
           ]
         }
       ]
+    },
+    {
+      // Section 4 — method preference
+      questions: [
+        {
+          id: "q1",
+          type: "radio",
+          label: "Which method do you prefer? (First row = actual MRI acquisition)",
+          options: ["Method 1", "Method 2", "Method 3"]
+        },
+        {
+          id: "q2",
+          type: "text",
+          label: "Additional comments (optional)"
+        }
+      ]
     }
-
-    /* ================================================================
-       INSERT REMAINING 28 CASES HERE (cases 3 through 30)
-       Follow the same structure:
-       {
-         sections: [
-           { image_url: "…", section_id: "caseN_sec1", questions: […] },
-           { image_url: "…", section_id: "caseN_sec2", questions: […] },
-           { image_url: "…", section_id: "caseN_sec3", questions: […] },
-           { image_url: "…", section_id: "caseN_sec4", questions: […] }
-         ]
-       }
-       ================================================================ */
   ];
+
+  var NUM_CASES = 30;
+  var CASE_DATA = [];
+
+  for (var c = 1; c <= NUM_CASES; c++) {
+    // Sections 1 & 2 use template 0, section 3 = template 1, section 4 = template 2
+    var secTemplates = [0, 0, 1, 2];
+    var sections = secTemplates.map(function (tplIdx, s) {
+      var tpl = SECTION_TEMPLATES[tplIdx];
+      return {
+        image_url: "https://picsum.photos/seed/case" + c + "_sec" + (s + 1) + "/700/400",
+        section_id: "case" + c + "_sec" + (s + 1),
+        questions: tpl.questions
+      };
+    });
+    CASE_DATA.push({ sections: sections });
+  }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   //  BUILD THE DOM
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+  var NUM_PRELUDE_SECTIONS = 2; // welcome + registration
+
   var container = document.getElementById("studyContainer");
-  var totalSections = 0;
+  var totalSections = NUM_PRELUDE_SECTIONS;
 
   // Count total sections across all cases for progress tracking
   CASE_DATA.forEach(function (c) { totalSections += c.sections.length; });
 
-  var sectionIndex = 0; // global flat index across all cases
+  var sectionIndex = NUM_PRELUDE_SECTIONS; // global flat index, skipping prelude pages
 
   CASE_DATA.forEach(function (c, caseIdx) {
     c.sections.forEach(function (sec, secIdx) {
       var secDiv = document.createElement("div");
-      secDiv.className = "section" + (sectionIndex === 0 ? " active" : "");
+      secDiv.className = "section";
       secDiv.dataset.caseIndex = caseIdx + 1;
       secDiv.dataset.sectionIndex = secIdx + 1;
       secDiv.dataset.sectionId = sec.section_id;
@@ -688,11 +728,27 @@
     var active = document.querySelector(".section.active");
     if (!active) return;
 
+    var type = active.dataset.sectionType;
+
+    if (type === "welcome") {
+      document.getElementById("currentCase").textContent   = "\u2014";
+      document.getElementById("currentStep").textContent   = "\u2014";
+      document.getElementById("totalProgress").textContent  = "\u2014";
+      document.getElementById("progressFill").style.width   = "0%";
+      return;
+    }
+    if (type === "registration") {
+      document.getElementById("currentCase").textContent   = "\u2014";
+      document.getElementById("currentStep").textContent   = "\u2014";
+      document.getElementById("totalProgress").textContent  = "\u2014";
+      document.getElementById("progressFill").style.width   = "0%";
+      return;
+    }
+
     var caseNum   = active.dataset.caseIndex;
     var stepNum   = active.dataset.sectionIndex;
-    var secId     = active.dataset.sectionId;
 
-    // Find the 1-based position of the active section
+    // Find the 1-based position of the active section (including prelude pages)
     var all = document.querySelectorAll(".section");
     var currentPos = 0;
     for (var i = 0; i < all.length; i++) {
@@ -709,6 +765,33 @@
 
   // Initialise progress on page load
   updateProgress();
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  HANDLE STATIC PAGES (welcome & registration)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  container.addEventListener("click", function (e) {
+    var btn = e.target.closest(".btn-next, .btn-submit");
+    if (!btn) return;
+    var sec = btn.closest(".section");
+    if (!sec) return;
+    // Only handle static sections (no caseIndex set by JS loop)
+    if (sec.dataset.caseIndex) return;
+
+    e.preventDefault();
+    if (!validateSection(sec)) return;
+
+    var next = sec.nextElementSibling;
+    while (next && !next.classList.contains("section")) {
+      next = next.nextElementSibling;
+    }
+    if (next) {
+      sec.classList.remove("active");
+      next.classList.add("active");
+      next.scrollIntoView({ behavior: "smooth", block: "start" });
+      updateProgress();
+    }
+  });
 
 })();
 </script>
