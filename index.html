@@ -64,7 +64,7 @@
   .study-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 90px 20px 100px;
+    padding: 90px 20px 0;
   }
 
   /* ── Section Card (default for static pages) ── */
@@ -89,7 +89,7 @@
   .section.case-section {
     padding: 0 !important;
     overflow: hidden;
-    min-height: calc(100vh - 160px);
+    height: calc(100vh - 80px);
   }
   .section.case-section.active {
     display: flex;
@@ -107,7 +107,6 @@
     top: 80px;
     align-self: flex-start;
     overflow: hidden;
-    cursor: zoom-in;
   }
   .section-image-panel img {
     width: 100%;
@@ -121,7 +120,7 @@
     flex: 1;
     padding: 28px 28px 24px;
     overflow-y: auto;
-    max-height: calc(100vh - 160px);
+    max-height: calc(100vh - 80px);
   }
 
   .section-title {
@@ -276,10 +275,7 @@
 
   /* ── Footer ── */
   .study-footer {
-    text-align: center;
-    padding: 16px 20px;
-    font-size: 0.8rem;
-    color: #888;
+    display: none;
   }
 
   /* ── Responsive ── */
@@ -1071,65 +1067,12 @@
     var scale = 1;
     var panX = 0;
     var panY = 0;
-    var isDragging = false;
-    var startX, startY;
     var MIN_SCALE = 1;
     var MAX_SCALE = 5;
 
     function update() {
       img.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
-      panel.style.cursor = scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in';
     }
-
-    // Mouse wheel zoom (towards cursor)
-    panel.addEventListener('wheel', function (e) {
-      e.preventDefault();
-      var rect = panel.getBoundingClientRect();
-      var mouseX = e.clientX - rect.left;
-      var mouseY = e.clientY - rect.top;
-      var delta = e.deltaY > 0 ? -0.1 : 0.1;
-      var newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale + delta));
-
-      if (newScale !== scale) {
-        var ratio = 1 - newScale / scale;
-        panX += (mouseX - panel.offsetWidth / 2 - panX) * ratio;
-        panY += (mouseY - panel.offsetHeight / 2 - panY) * ratio;
-        scale = newScale;
-        update();
-      }
-    }, { passive: false });
-
-    // Double-click to reset
-    img.addEventListener('dblclick', function (e) {
-      e.preventDefault();
-      scale = 1;
-      panX = 0;
-      panY = 0;
-      update();
-    });
-
-    // Drag to pan (when zoomed in)
-    img.addEventListener('mousedown', function (e) {
-      if (scale > 1) {
-        isDragging = true;
-        startX = e.clientX - panX;
-        startY = e.clientY - panY;
-        e.preventDefault();
-      }
-    });
-
-    document.addEventListener('mousemove', function (e) {
-      if (isDragging) {
-        panX = e.clientX - startX;
-        panY = e.clientY - startY;
-        update();
-      }
-    });
-
-    document.addEventListener('mouseup', function () {
-      isDragging = false;
-      update();
-    });
 
     // Zoom control buttons
     var controls = document.createElement('div');
