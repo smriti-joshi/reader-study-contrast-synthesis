@@ -529,7 +529,7 @@
   .glossary-wrapper {
     flex-shrink: 0;
     background: #111;
-    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
   }
   .glossary-toggle {
     display: inline-flex;
@@ -774,7 +774,8 @@
           id: "q2",
           type: "radio",
           label: "(If mass) Shape",
-          options: ["Round", "Oval", "Irregular"]
+          options: ["Round", "Oval", "Irregular"],
+          required: false
         },
         {
           id: "q3",
@@ -803,7 +804,7 @@
         {
           id: "q6",
           type: "radio",
-          label: "Overall image quality",
+          label: "Overall quality of the MRI image irrespective of the tumor.",
           options: [
             "Non-diagnostic (severe artifacts or unusable quality)",
             "Poor (significant artifacts/noise limiting interpretation)",
@@ -1062,9 +1063,8 @@
       img.loading = "lazy";
       imgWrap.appendChild(img);
       makeZoomable(imgWrap);
-      imgPanel.appendChild(imgWrap);
 
-      // ── Glossary (below image, inside image panel) ──
+      // ── Glossary (above image, inside image panel) ──
       var glossaryWrapper = document.createElement("div");
       glossaryWrapper.className = "glossary-wrapper";
 
@@ -1105,6 +1105,7 @@
 
       glossaryWrapper.appendChild(glossaryPanel);
       imgPanel.appendChild(glossaryWrapper);
+      imgPanel.appendChild(imgWrap);
 
       secDiv.appendChild(imgPanel);
 
@@ -1674,6 +1675,8 @@
   container.addEventListener("click", function (e) {
     var btn = e.target.closest(".btn-next, .btn-submit");
     if (!btn) return;
+    // Skip submit buttons — they have their own handler on the opinion page
+    if (btn.classList.contains("btn-submit")) return;
     var sec = btn.closest(".section");
     if (!sec) return;
     // Only handle static sections (no caseIndex set by JS loop)
