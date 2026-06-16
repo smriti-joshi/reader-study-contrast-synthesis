@@ -517,6 +517,74 @@
   .save-indicator.visible {
     opacity: 1;
   }
+
+  /* ── Glossary ── */
+  .glossary-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: #1976d2;
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+  .glossary-toggle:hover {
+    background: #bbdefb;
+  }
+  .glossary-toggle .arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+    font-size: 0.7rem;
+  }
+  .glossary-toggle.expanded .arrow {
+    transform: rotate(90deg);
+  }
+  .glossary-panel {
+    display: none;
+    background: #f8f9fb;
+    border: 1px solid #e0e4e8;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    animation: fadeIn 0.2s ease;
+  }
+  .glossary-panel.visible {
+    display: block;
+  }
+  .glossary-item {
+    display: flex;
+    padding: 5px 0;
+    border-bottom: 1px solid #eef1f5;
+  }
+  .glossary-item:last-child {
+    border-bottom: none;
+  }
+  .glossary-term {
+    font-weight: 600;
+    color: #0d47a1;
+    min-width: 180px;
+    flex-shrink: 0;
+  }
+  .glossary-def {
+    color: #444;
+  }
+  @media (max-width: 600px) {
+    .glossary-item {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .glossary-term {
+      min-width: auto;
+    }
+  }
 </style>
 </head>
 <body>
@@ -632,23 +700,23 @@
 
       <div class="question-group">
         <div class="question-label">First name <span class="required">*</span></div>
-        <input type="text" name="reader_firstname" placeholder="First name">
+        <input type="text" name="reader_firstname" placeholder="First name" required>
       </div>
       <div class="question-group">
         <div class="question-label">Surname <span class="required">*</span></div>
-        <input type="text" name="reader_surname" placeholder="Surname">
+        <input type="text" name="reader_surname" placeholder="Surname" required>
       </div>
       <div class="question-group">
         <div class="question-label">Email <span class="required">*</span></div>
-        <input type="text" name="reader_email" placeholder="email@institution.org">
+        <input type="text" name="reader_email" placeholder="email@institution.org" required>
       </div>
       <div class="question-group">
         <div class="question-label">Institution <span class="required">*</span></div>
-        <input type="text" name="reader_institution" placeholder="Institution name">
+        <input type="text" name="reader_institution" placeholder="Institution name" required>
       </div>
       <div class="question-group">
         <div class="question-label">Years of experience as a breast radiologist <span class="required">*</span></div>
-        <input type="text" name="reader_experience" placeholder="e.g. 5">
+        <input type="text" name="reader_experience" placeholder="e.g. 5" required>
       </div>
 
       <div class="nav-buttons">
@@ -734,7 +802,7 @@
     },
     {
       // Section 3 — clinical decision
-      description: "Please compare the synthetic and real image and assess their diagnostic equivalence. The anomaly map shows variability across multiple generations of the same image by the AI model: black areas are consistent across all generated images (low uncertainty) while variability increases as the color moves towards yellow, indicating the model is less sure about those regions (e.g. MRI noise, uncertain about extent of the tumor, necrosis etc.). Evaluate the impact on clinical decision-making and perceived synthetic appearance.",
+      description: "Please compare the synthetic and real image and assess their diagnostic equivalence. Evaluate the impact on clinical decision-making and perceived synthetic appearance. The anomaly map shows variability across multiple generations by the AI model: black areas are consistent across all generated images (low uncertainty) while as variability increases, the color moves towards yellow, indicating that the model is uncertain (e.g. MRI noise, uncertain about extent of the tumor, necrosis etc.).",
       questions: [
         {
           id: "q1",
@@ -995,6 +1063,43 @@
         questionsPanel.appendChild(desc);
       }
 
+      // ── Glossary ──
+      var glossaryToggle = document.createElement("div");
+      glossaryToggle.className = "glossary-toggle";
+      glossaryToggle.innerHTML = "<span class=\"arrow\">\u25B6</span> Glossary";
+      glossaryToggle.addEventListener("click", function () {
+        var panel = this.nextElementSibling;
+        if (panel.classList.contains("visible")) {
+          panel.classList.remove("visible");
+          this.classList.remove("expanded");
+        } else {
+          panel.classList.add("visible");
+          this.classList.add("expanded");
+        }
+      });
+      questionsPanel.appendChild(glossaryToggle);
+
+      var glossaryPanel = document.createElement("div");
+      glossaryPanel.className = "glossary-panel";
+
+      var glossaryItems = [
+        { term: "GT", def: "Stands for ground truth, referring to the image acquired by the MRI setup." },
+        { term: "Mean Intensity (Tumor ROI)", def: "Mean normalized intensity (between 0 and 1) computed within the tumor region." },
+        { term: "Baseline (in enhancement curve)", def: "Mean normalized intensity (between 0 and 1) within the tumor region in the pre-contrast image." },
+        { term: "Acquisition Time", def: "Time in seconds from the start of the scan (pre-contrast image)." },
+        { term: "Synthetic / Predicted", def: "Image generated by the AI model." },
+        { term: "\u03C3 (Sigma)", def: "Variance across multiple predictions by the AI model." }
+      ];
+
+      glossaryItems.forEach(function (item) {
+        var row = document.createElement("div");
+        row.className = "glossary-item";
+        row.innerHTML = "<span class=\"glossary-term\">" + item.term + "</span><span class=\"glossary-def\">" + item.def + "</span>";
+        glossaryPanel.appendChild(row);
+      });
+
+      questionsPanel.appendChild(glossaryPanel);
+
       // ── Questions ──
       sec.questions.forEach(function (q, qIdx) {
         var nameAttr = sec.section_id + "_" + q.id;
@@ -1004,7 +1109,7 @@
 
         var label = document.createElement("div");
         label.className = "question-label";
-        var isRequired = q.required !== undefined ? q.required : (q.type !== "text" || (q.label && !/optional/i.test(q.label)));
+        var isRequired = q.required !== undefined ? q.required : (q.type !== "text");
         label.innerHTML = q.label + (isRequired ? '<span class="required"> *</span>' : "");
         grp.appendChild(label);
 
@@ -1049,7 +1154,7 @@
           inp.type = "text";
           inp.name = nameAttr;
           inp.placeholder = q.label;
-          inp.required = false; // text inputs are optional unless specified
+          inp.required = isRequired; // text inputs are optional unless specified
           grp.appendChild(inp);
         }
 
