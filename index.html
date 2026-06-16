@@ -610,7 +610,7 @@
           </div>
           <div class="welcome-detail-item">
             <span class="detail-icon">&#x23F1;&#xFE0F;</span>
-            <span>30 cases &middot; ~45 minutes</span>
+            <span>40 cases &middot; ~ 45 - 60 minutes</span>
           </div>
         </div>
         <p class="welcome-disclaimer">
@@ -766,7 +766,8 @@
             "Incorrect tumor extent/size estimation",
             "Implausible enhacement kinetics",
             "Image quality issues (artifacts, noise, etc.)",
-            "Missed lesion or false detection"
+            "Missed lesion or false detection",
+            "None of the above"
           ], 
         },
         {
@@ -1011,13 +1012,13 @@
           var radioGroup = document.createElement("div");
           radioGroup.className = "radio-group";
 
-          q.options.forEach(function (opt) {
+          q.options.forEach(function (opt, idx) {
             var wrap = document.createElement("label");
             var inp = document.createElement("input");
             inp.type = "radio";
             inp.name = nameAttr;
             inp.value = opt;
-            inp.required = false;
+            inp.required = isRequired && idx === 0;
             wrap.appendChild(inp);
             wrap.appendChild(document.createTextNode(" " + opt));
             radioGroup.appendChild(wrap);
@@ -1029,13 +1030,13 @@
           var checkboxGroup = document.createElement("div");
           checkboxGroup.className = "checkbox-group";
 
-          q.options.forEach(function (opt) {
+          q.options.forEach(function (opt, idx) {
             var wrap = document.createElement("label");
             var inp = document.createElement("input");
             inp.type = "checkbox";
             inp.name = nameAttr;
             inp.value = opt;
-            inp.required = false;
+            inp.required = isRequired && idx === 0;
             wrap.appendChild(inp);
             wrap.appendChild(document.createTextNode(" " + opt));
             checkboxGroup.appendChild(wrap);
@@ -1048,7 +1049,7 @@
           inp.type = "text";
           inp.name = nameAttr;
           inp.placeholder = q.label;
-          inp.required = false;
+          inp.required = false; // text inputs are optional unless specified
           grp.appendChild(inp);
         }
 
@@ -1212,6 +1213,17 @@
         var checked = false;
         for (var r = 0; r < radios.length; r++) {
           if (radios[r].checked) { checked = true; break; }
+        }
+        if (!checked) {
+          alert("Please answer all questions before proceeding.\n\nMissing: \"" +
+                getLabelForField(field) + "\"");
+          return false;
+        }
+      } else if (field.type === "checkbox") {
+        var checkboxes = el.querySelectorAll("input[type='checkbox'][name='" + field.name + "']");
+        var checked = false;
+        for (var c = 0; c < checkboxes.length; c++) {
+          if (checkboxes[c].checked) { checked = true; break; }
         }
         if (!checked) {
           alert("Please answer all questions before proceeding.\n\nMissing: \"" +
