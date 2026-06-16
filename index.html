@@ -100,13 +100,20 @@
     max-width: 70%;
     background: #1a1a2e;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
     min-height: inherit;
     position: sticky;
     top: 80px;
     align-self: flex-start;
+  }
+  .section-image-panel .img-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
+    position: relative;
+    min-height: 0;
   }
   .section-image-panel img {
     width: 100%;
@@ -519,51 +526,40 @@
   }
 
   /* ── Glossary ── */
-  .glossary-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(4px);
-    max-height: 50%;
-    overflow-y: auto;
-    transition: max-height 0.3s ease;
-  }
-  .glossary-overlay.collapsed {
-    max-height: 42px;
-    overflow: hidden;
+  .glossary-wrapper {
+    flex-shrink: 0;
+    background: #111;
+    border-top: 1px solid #333;
   }
   .glossary-toggle {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
-    color: #fff;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 6px;
-    padding: 8px 14px;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #90caf9;
+    background: transparent;
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 4px 10px;
     cursor: pointer;
     transition: background 0.2s;
     user-select: none;
     margin: 6px 10px;
   }
   .glossary-toggle:hover {
-    background: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.1);
   }
   .glossary-toggle .arrow {
     display: inline-block;
     transition: transform 0.25s ease;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
   .glossary-toggle.expanded .arrow {
     transform: rotate(90deg);
   }
   .glossary-panel {
     display: none;
-    padding: 0 10px 12px;
+    padding: 0 12px 12px;
     font-size: 0.82rem;
     line-height: 1.5;
     animation: fadeIn 0.2s ease;
@@ -573,8 +569,8 @@
   }
   .glossary-item {
     display: flex;
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .glossary-item:last-child {
     border-bottom: none;
@@ -582,11 +578,11 @@
   .glossary-term {
     font-weight: 600;
     color: #90caf9;
-    min-width: 180px;
+    min-width: 160px;
     flex-shrink: 0;
   }
   .glossary-def {
-    color: #ddd;
+    color: #bbb;
   }
   @media (max-width: 600px) {
     .glossary-overlay {
@@ -1056,34 +1052,37 @@
       var imgPanel = document.createElement("div");
       imgPanel.className = "section-image-panel";
 
+      // Image wrapper for zoom & sticky positioning
+      var imgWrap = document.createElement("div");
+      imgWrap.className = "img-wrap";
+
       var img = document.createElement("img");
       img.src = sec.image_url;
       img.alt = "Case " + (caseIdx + 1) + " Section " + (secIdx + 1);
       img.loading = "lazy";
-      imgPanel.appendChild(img);
-      makeZoomable(imgPanel);
+      imgWrap.appendChild(img);
+      makeZoomable(imgWrap);
+      imgPanel.appendChild(imgWrap);
 
-      // ── Glossary Overlay (bottom of image) ──
-      var glossaryOverlay = document.createElement("div");
-      glossaryOverlay.className = "glossary-overlay collapsed";
+      // ── Glossary (below image, inside image panel) ──
+      var glossaryWrapper = document.createElement("div");
+      glossaryWrapper.className = "glossary-wrapper";
 
       var glossaryToggle = document.createElement("div");
       glossaryToggle.className = "glossary-toggle";
       glossaryToggle.innerHTML = "<span class=\"arrow\">\u25B6</span> Glossary";
       glossaryToggle.addEventListener("click", function () {
-        var overlay = this.parentNode;
-        var panel = overlay.querySelector(".glossary-panel");
+        var wrapper = this.parentNode;
+        var panel = wrapper.querySelector(".glossary-panel");
         if (panel.classList.contains("visible")) {
           panel.classList.remove("visible");
-          overlay.classList.add("collapsed");
           this.classList.remove("expanded");
         } else {
           panel.classList.add("visible");
-          overlay.classList.remove("collapsed");
           this.classList.add("expanded");
         }
       });
-      glossaryOverlay.appendChild(glossaryToggle);
+      glossaryWrapper.appendChild(glossaryToggle);
 
       var glossaryPanel = document.createElement("div");
       glossaryPanel.className = "glossary-panel";
@@ -1104,8 +1103,8 @@
         glossaryPanel.appendChild(row);
       });
 
-      glossaryOverlay.appendChild(glossaryPanel);
-      imgPanel.appendChild(glossaryOverlay);
+      glossaryWrapper.appendChild(glossaryPanel);
+      imgPanel.appendChild(glossaryWrapper);
 
       secDiv.appendChild(imgPanel);
 
