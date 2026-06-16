@@ -680,7 +680,7 @@
   var SECTION_TEMPLATES = [
     {
       // Sections 1 & 2 — lesion characterization + image quality
-      description: "Please assess the features of the tumor in the image. Evaluate lesion type, morphology, enhancement pattern, kinetic plausibility, and overall image quality.",
+      description: "Consider the area inside the breast region and characterize the tumor. The image on your screen could be real or synthetic - assess it irrespective of your inclination. The first four questions (Lesion type, Shape, Margins, Enhancement pattern) are for tumor characterization based on the image row, enhancement based on the tumor and mean intensity graph inside the tumor. The last question (Overall image quality) is based on the realism of the MRI image.",
       questions: [
         {
           id: "q1",
@@ -734,7 +734,7 @@
     },
     {
       // Section 3 — clinical decision
-      description: "Please compare the synthetic and real image and assess their diagnostic equivalence. Evaluate the impact on clinical decision-making and perceived synthetic appearance.",
+      description: "Please compare the synthetic and real image and assess their diagnostic equivalence. The uncertainty map shows variability across multiple generations of the same image — black areas are consistent (low uncertainty) while red areas show high variability, indicating the model is less sure about those regions. Evaluate the impact on clinical decision-making and perceived synthetic appearance.",
       questions: [
         {
           id: "q1",
@@ -759,8 +759,8 @@
         },
         {
           id: "q3",
-          type: "radio",
-          label: "If the impact is major, what is the main reason?",
+          type: "checkbox",
+          label: "If the impact is major, what is the main reason? (select all that apply)",
           options: [
             "Incorrect tumor localization",
             "Incorrect tumor extent/size estimation",
@@ -784,12 +784,32 @@
             "Moderate Complexity: Intermediate assessment; some ambiguities present but manageable.",
             "Low Complexity: Straightforward assessment; obvious pathology and clear background anatomy."
           ]
+        },
+        {
+          id: "q6",
+          type: "radio",
+          label: "How does the uncertainty map affect your confidence in evaluating the synthetic image?",
+          options: [
+            "Increases confidence (I know exactly which regions to trust)",
+            "No change in confidence (The map does not add useful context)",
+            "Decreases confidence (The map makes me doubt the entire synthetic image)"
+          ]
+        },
+        {
+          id: "q7",
+          type: "radio",
+          label: "If presented with this synthetic image and its uncertainty map in a real workflow, what would be your next step?",
+          options: [
+            "Proceed normally (uncertainty is negligible or in non-critical areas)",
+            "Review with caution (uncertainty overlaps with pathology, but is manageable)",
+            "Request contrast injection for this patient (uncertainty is too high in critical diagnostic areas)"
+          ]
         }
       ]
     },
     {
       // Section 4 — method preference
-      description: "Please compare contrast synthesis methods present in the literature and choose the synthetic image generation you prefer based on image quality and diagnostic utility.",
+      description: "These are popular SOTA methods for contrast synthesis. Compare them based on tumor characterization, enhancement quality, and overall image quality, and choose the synthetic image generation you prefer.",
       questions: [
         {
           id: "q1",
@@ -1007,6 +1027,24 @@
 
           grp.appendChild(radioGroup);
 
+        } else if (q.type === "checkbox") {
+          var checkboxGroup = document.createElement("div");
+          checkboxGroup.className = "checkbox-group";
+
+          q.options.forEach(function (opt) {
+            var wrap = document.createElement("label");
+            var inp = document.createElement("input");
+            inp.type = "checkbox";
+            inp.name = nameAttr;
+            inp.value = opt;
+            inp.required = false;
+            wrap.appendChild(inp);
+            wrap.appendChild(document.createTextNode(" " + opt));
+            checkboxGroup.appendChild(wrap);
+          });
+
+          grp.appendChild(checkboxGroup);
+
         } else if (q.type === "text") {
           var inp = document.createElement("input");
           inp.type = "text";
@@ -1123,6 +1161,16 @@
 
     addOpinionQuestion(
       "What specific improvements would you prioritize? (e.g. spatial resolution, temporal consistency, kinetic accuracy, artifact reduction)",
+      "textarea", null, false
+    );
+
+    addOpinionQuestion(
+      "What are your thoughts on using virtual contrast MRI in combination with mammography for breast cancer screening?",
+      "textarea", null, false
+    );
+
+    addOpinionQuestion(
+      "How do you feel about using virtual contrast MRI together with other MRI sequences (e.g. DWI) for diagnostic assessment?",
       "textarea", null, false
     );
 
