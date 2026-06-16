@@ -519,23 +519,39 @@
   }
 
   /* ── Glossary ── */
+  .glossary-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    max-height: 50%;
+    overflow-y: auto;
+    transition: max-height 0.3s ease;
+  }
+  .glossary-overlay.collapsed {
+    max-height: 42px;
+    overflow: hidden;
+  }
   .glossary-toggle {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.82rem;
-    color: #1976d2;
-    background: #e3f2fd;
-    border: 1px solid #90caf9;
+    font-size: 0.8rem;
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
     border-radius: 6px;
-    padding: 5px 12px;
+    padding: 8px 14px;
     cursor: pointer;
     transition: background 0.2s;
-    margin-bottom: 12px;
     user-select: none;
+    margin: 6px 10px;
   }
   .glossary-toggle:hover {
-    background: #bbdefb;
+    background: rgba(255,255,255,0.22);
   }
   .glossary-toggle .arrow {
     display: inline-block;
@@ -547,12 +563,8 @@
   }
   .glossary-panel {
     display: none;
-    background: #f8f9fb;
-    border: 1px solid #e0e4e8;
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-bottom: 16px;
-    font-size: 0.85rem;
+    padding: 0 10px 12px;
+    font-size: 0.82rem;
     line-height: 1.5;
     animation: fadeIn 0.2s ease;
   }
@@ -562,21 +574,27 @@
   .glossary-item {
     display: flex;
     padding: 5px 0;
-    border-bottom: 1px solid #eef1f5;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
   }
   .glossary-item:last-child {
     border-bottom: none;
   }
   .glossary-term {
     font-weight: 600;
-    color: #0d47a1;
+    color: #90caf9;
     min-width: 180px;
     flex-shrink: 0;
   }
   .glossary-def {
-    color: #444;
+    color: #ddd;
   }
   @media (max-width: 600px) {
+    .glossary-overlay {
+      max-height: 40%;
+    }
+    .glossary-overlay.collapsed {
+      max-height: 40px;
+    }
     .glossary-item {
       flex-direction: column;
       gap: 2px;
@@ -1044,40 +1062,28 @@
       img.loading = "lazy";
       imgPanel.appendChild(img);
       makeZoomable(imgPanel);
-      secDiv.appendChild(imgPanel);
 
-      // ── Right Panel: Title + Questions + Nav (scrollable) ──
-      var questionsPanel = document.createElement("div");
-      questionsPanel.className = "section-questions-panel";
+      // ── Glossary Overlay (bottom of image) ──
+      var glossaryOverlay = document.createElement("div");
+      glossaryOverlay.className = "glossary-overlay collapsed";
 
-      var title = document.createElement("div");
-      title.className = "section-title";
-      title.textContent = "Case " + (caseIdx + 1) + " \u2014 Section " + (secIdx + 1);
-      questionsPanel.appendChild(title);
-
-      // ── Section Description ──
-      if (sec.description) {
-        var desc = document.createElement("p");
-        desc.className = "section-description";
-        desc.textContent = sec.description;
-        questionsPanel.appendChild(desc);
-      }
-
-      // ── Glossary ──
       var glossaryToggle = document.createElement("div");
       glossaryToggle.className = "glossary-toggle";
       glossaryToggle.innerHTML = "<span class=\"arrow\">\u25B6</span> Glossary";
       glossaryToggle.addEventListener("click", function () {
-        var panel = this.nextElementSibling;
+        var overlay = this.parentNode;
+        var panel = overlay.querySelector(".glossary-panel");
         if (panel.classList.contains("visible")) {
           panel.classList.remove("visible");
+          overlay.classList.add("collapsed");
           this.classList.remove("expanded");
         } else {
           panel.classList.add("visible");
+          overlay.classList.remove("collapsed");
           this.classList.add("expanded");
         }
       });
-      questionsPanel.appendChild(glossaryToggle);
+      glossaryOverlay.appendChild(glossaryToggle);
 
       var glossaryPanel = document.createElement("div");
       glossaryPanel.className = "glossary-panel";
@@ -1098,7 +1104,27 @@
         glossaryPanel.appendChild(row);
       });
 
-      questionsPanel.appendChild(glossaryPanel);
+      glossaryOverlay.appendChild(glossaryPanel);
+      imgPanel.appendChild(glossaryOverlay);
+
+      secDiv.appendChild(imgPanel);
+
+      // ── Right Panel: Title + Questions + Nav (scrollable) ──
+      var questionsPanel = document.createElement("div");
+      questionsPanel.className = "section-questions-panel";
+
+      var title = document.createElement("div");
+      title.className = "section-title";
+      title.textContent = "Case " + (caseIdx + 1) + " \u2014 Section " + (secIdx + 1);
+      questionsPanel.appendChild(title);
+
+      // ── Section Description ──
+      if (sec.description) {
+        var desc = document.createElement("p");
+        desc.className = "section-description";
+        desc.textContent = sec.description;
+        questionsPanel.appendChild(desc);
+      }
 
       // ── Questions ──
       sec.questions.forEach(function (q, qIdx) {
